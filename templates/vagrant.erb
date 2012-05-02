@@ -1,0 +1,59 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+<%load "/var/lib/jenkins/ConfigFileGenerator/foo3.rb"%>
+<%free_ip = get_free_ips(7)%>
+<%free_ports = get_free_ports(8)%>
+<%write_hosts(free_ip)%>
+Vagrant::Config.run do |config|
+  config.vm.define :management do |management_config|
+    management_config.vm.box = "servtag-test08"
+    management_config.vm.host_name = 'management.vagrant.servtag.com'
+    management_config.vm.network :hostonly, "<%=free_ip[0]%>"
+    management_config.vm.share_folder "vagrant", "/vagrant", "."
+    management_config.vm.forward_port 80, <%=free_ports[0]%>
+  end
+  config.vm.define :targeting do |targeting_config|
+    targeting_config.vm.box = "servtag-test08"
+    targeting_config.vm.host_name = 'targeting.vagrant.servtag.com'
+    targeting_config.vm.network :hostonly, "<%=free_ip[1]%>"
+    targeting_config.vm.share_folder "vagrant", "/vagrant", "."
+    targeting_config.vm.forward_port 80, <%=free_ports[1]%>
+  end
+  config.vm.define :rabbit do |rabbit_config|
+    rabbit_config.vm.box = "servtag-test08"
+    rabbit_config.vm.host_name = 'rabbit.vagrant.servtag.com'
+    rabbit_config.vm.network :hostonly, "<%=free_ip[2]%>"
+    rabbit_config.vm.share_folder "vagrant", "/vagrant", "."
+    rabbit_config.vm.forward_port 80, <%=free_ports[2]%>
+    rabbit_config.vm.forward_port 55672, <%=free_ports[3]%>
+  end
+  config.vm.define :analytics do |analytics_config|
+    analytics_config.vm.box = "servtag-test08"
+    analytics_config.vm.host_name = 'analytics.vagrant.servtag.com'
+    analytics_config.vm.network :hostonly, "<%=free_ip[3]%>"
+    analytics_config.vm.share_folder "vagrant", "/vagrant", "."
+    analytics_config.vm.forward_port 80, <%=free_ports[4]%>
+  end
+  config.vm.define :bannerserver do |bannerserver_config|
+    bannerserver_config.vm.box = "servtag-test08"
+    bannerserver_config.vm.host_name = 'bannerserver.vagrant.servtag.com'
+    bannerserver_config.vm.network :hostonly, "<%=free_ip[4]%>"
+    bannerserver_config.vm.share_folder "vagrant", "/vagrant", "."
+    bannerserver_config.vm.forward_port 80, <%=free_ports[5]%>
+  end
+  config.vm.define :imageserver do |imageserver_config|
+    imageserver_config.vm.box = "servtag-test08"
+    imageserver_config.vm.host_name = 'imageserver.vagrant.servtag.com'
+    imageserver_config.vm.network :hostonly, "<%=free_ip[5]%>"
+    imageserver_config.vm.share_folder "vagrant", "/vagrant", "."
+    imageserver_config.vm.forward_port 80, <%=free_ports[6]%>
+  end
+  config.vm.define :integration do |integration_config|
+    integration_config.vm.box = "servtag-test08"
+    integration_config.vm.host_name = 'integration.vagrant.servtag.com'
+    integration_config.vm.network :hostonly, "<%=free_ip[6]%>"
+    integration_config.vm.share_folder "vagrant", "/vagrant", "."
+    integration_config.vm.forward_port 80, <%=free_ports[7]%>
+  end
+
+end
