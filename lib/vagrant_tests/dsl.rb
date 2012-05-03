@@ -4,11 +4,12 @@ module VagrantTest
 
     attr_accessor :services, :ip, :name, :env, :base_box
 
-    def initialize server_name, base_box
+    def initialize name, base_box
       @base_box = base_box
       @env = Vagrant::Environment.new
+      self.name = name
       @env.vms.each do | vm_name , vm|
-        @env = vm if vm_name == server_name
+        @env = vm if vm_name == name
       end
     end
 
@@ -78,7 +79,7 @@ module VagrantTest
 
     class << self
 
-      attr_accessor :ip, :path, :port_fowards, :vm
+      attr_accessor :ip, :path, :port_forwards, :vm
 
       def name
         self.to_s.downcase
@@ -109,7 +110,7 @@ module VagrantTest
 
     attr_accessor :vms, :spec_path, :test_vm
 
-    def add_vm name, base_box = 'servtag-test08'
+    def add_vm name, base_box = Settings.base_box
       (@vms ||= []) << (vm = VM.new(name, base_box))
       yield vm if block_given?
       vm

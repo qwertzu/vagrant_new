@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../lib/vagrant_tests')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/vagrant_tests')
 
 class Management < VagrantTest::Service
 

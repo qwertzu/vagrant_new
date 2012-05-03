@@ -1,0 +1,6 @@
+vagrant:
+  base_box: servtag-test08
+  hosts_file: '/home/weise/hosts'
+  vagrant_file: '/home/weise/vagrant_tests/Vagrantfile'
+  ip_mem: '/home/weise/vagrant_tests/ip_mem'
+  management_path: '/home/weise/dealomio_management_api'

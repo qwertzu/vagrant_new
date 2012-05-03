@@ -16,3 +16,7 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+config/application.example
+ip_mem
+Vagrantfile

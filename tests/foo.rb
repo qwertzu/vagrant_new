@@ -1,12 +1,11 @@
-require File.expand_path(File.dirname(__FILE__) + './../lib/vagrant_tests')
-require File.expand_path(File.dirname(__FILE__) + './../startup/dealomio_management_api/dealomio_management_api')
+require File.expand_path(File.dirname(__FILE__) + '/vagrant_helper')
 
 include VagrantTest::DSL
 
- vagrant_test do |env|
-    man = env.add_vm('name')
-    man.add Management
+vagrant_test do |env|
+  man = env.add_vm(:default)
+  man.add Management
 
-   env.spec_path= '../path_to_spec/'
-   env.test_vm= man
- end
+  env.spec_path= '../path_to_spec/'
+  env.test_vm= man
+end

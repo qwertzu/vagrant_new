@@ -2,15 +2,15 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-   <% config.vms.each do |vm| %>
-      config.vm.define :<%=vm.services.first.name%> do |<%= vm.name %>_config|
-        <%= vm.name %>_config.vm.box = "servtag-test08"
-        <%= vm.name %>_config.vm.host_name = '<%= vm.name %>.vagrant.servtag.com'
-        <%= vm.name %>_config.vm.network :hostonly, "<%= vm.ip %>"
-        <%= vm.name %>_config.vm.share_folder "vagrant", "/vagrant", "."
-        <% vm.services.map(&:port_forwards).inject({}) { |hash, h| hash.merge(h) }.each_pair do |port, forward| %>
-          <%= vm.name %>_config.vm.forward_port <%= port %>, <%= forward %>
-        <% end %>
-      end
-   <% end %>
+<% config.vms.each do |vm| %>
+  config.vm.define :<%=vm.services.first.name%> do |<%= vm.name %>_config|
+    <%= vm.name %>_config.vm.box = "<%= vm.base_box %>"
+    <%= vm.name %>_config.vm.host_name = '<%= vm.name %>.vagrant.servtag.com'
+    <%= vm.name %>_config.vm.network :hostonly, "<%= vm.ip %>"
+    <%= vm.name %>_config.vm.share_folder "vagrant", "/vagrant", "."
+    <% vm.services.map(&:port_forwards).inject({}) { |hash, h| hash.merge(h) }.each_pair do |port, forward| %>
+    <%= vm.name %>_config.vm.forward_port <%= port %>, <%= forward %>
+    <% end %>
+  end
+<% end %>
 end
