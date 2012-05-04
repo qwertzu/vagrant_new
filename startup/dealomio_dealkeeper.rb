@@ -1,0 +1,28 @@
+require File.expand_path(File.dirname(__FILE__) + '/../lib/vagrant_tests')
+
+class Dealkeeper < VagrantTest::Service
+
+  class << self
+
+    def run
+      exec_home('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
+      exec_home('bundle install')
+      exec_home('RAILS_ENV=vagrant bundle exec ruby script/start.rb start')
+    end
+
+    def code_directory
+      Settings.dealkeeper_path
+    end
+
+    def ports
+      [6767]
+    end
+
+    def stop
+      #TODO implement me!
+    end
+
+  end
+
+end
+
