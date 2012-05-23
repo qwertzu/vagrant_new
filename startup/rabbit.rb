@@ -26,4 +26,3 @@ class Rabbit < VagrantTest::Service
 end
 
 
-

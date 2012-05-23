@@ -1,4 +1,5 @@
 vagrant:
+  lock_file: '/tmp/vagrant_tests.lock'
   base_box: servtag-test08
   hosts_file: '/home/bendyk/hosts'
   vagrant_file: '/home/bendyk/vagrant_tests/Vagrantfile'
