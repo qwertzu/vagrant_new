@@ -21,13 +21,12 @@ module VagrantTest
 
         write_hosts(services)
         write_vagrant_file(config)
-        create_symlinks(services)
       end
 
       def get_free_ips number
         if (ip_mem = File.open(Settings.ip_mem, 'a+'))
           free_ips    = []
-          ip_adress   = 100
+          ip_adress   = 101
           ip_sbmask   = 0
           sbmask_used = true
           lines       = ip_mem.readlines
@@ -59,19 +58,17 @@ module VagrantTest
         portnumber = 8100
         ports      = []
         while ports.length < number
-          if is_port_open(portnumber)
-            ports << portnumber
-          end
+          ports << portnumber if is_port_open(portnumber)
           portnumber += 1
         end
         ports
       end
 
 
-      def is_port_open(port, ip = "127.0.0.1")
+      def is_port_open(port)
         begin
-          TCPSocket.new(ip, port)
-        rescue Errno::ECONNREFUSED
+          TCPServer.open(port).close
+        rescue
           return false
         end
         return true
@@ -79,27 +76,25 @@ module VagrantTest
 
 
       def write_hosts(services)
+        puts "create hosts file"
         hosts_file = File.open(Settings.hosts_file, 'w')
         hosts_file.puts("127.0.0.1 localhost")
 
         services.each { |service| hosts_file.puts("#{service.ip} #{service.name}") }
-
         hosts_file.close
       end
 
       def write_vagrant_file(config)
+        puts "create Vagrantfile"
         vag_file = File.open(Settings.vagrant_file, 'w')
         vag_file.write(ERB.new(TEMPLATE).result(binding))
       end
 
-      def create_symlinks(services)
-        #TODO implement me
-      end
 
       def delete_ips
         hosts_file = File.open(Settings.hosts_file, 'a+')
-        hosts_file.read_line #first line = localhost
-        sub_net = hosts_file.read_line.split('.')[2]
+        hosts_file.readline #first line = localhost
+        sub_net = hosts_file.readline.split('.')[2]
         hosts_file.close
         ip_mem = File.open(Settings.ip_mem, 'a+')
         lines  = ip_mem.readlines

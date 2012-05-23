@@ -2,6 +2,7 @@ require 'rubygems'
 require 'socket'
 require 'active_support/all'
 require 'vagrant'
+require 'awesome_print'
 
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__), 'vagrant_tests'))
 

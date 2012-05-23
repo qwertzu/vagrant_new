@@ -1,27 +1,32 @@
-require 'rubygems'
-require 'vagrant'
-require 'test_helper.rb'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/vagrant_tests')
 
-dir = "/vagrant/targeting"
-server = :targeting
+class Targeting < VagrantTest::Service
 
-v=V.new(dir , server)
-v.up
-v.exec("bundle install")
-v.exec('cp -v config/redis.yml.example config/redis.yml')
-v.exec('cp -v config/application.yml.example config/application.yml')
-v.exec('cp -v config/logcaster.yml.example config/logcaster.yml')
-#v.exec('rm -rf reports')
-#v.exec('CI_REPORTS=./reports RACK_ENV=production rspec spec --format CI::Reporter::RSpec')
-v.sudo('/etc/init.d/redis-server start')
-v.sudo('/etc/init.d/apache2 start')
-v.exec('ruby script/targeting_publisher_consumer_daemon start')
+  class << self
 
+    def run
+      exec_home("bundle install")
+      exec_home('cp -v config/redis.yml.example config/redis.yml')
+      exec_home('cp -v config/application.yml.example config/application.yml')
+      exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
+      sudo('/etc/init.d/redis-server start')
+      sudo('/etc/init.d/apache2 start')
+      exec_home('ruby script/targeting_publisher_consumer_daemon start')
+    end
 
-v.dir = '/vagrant/dealkeeper'
+    def code_directory
+      Settings.targeting_path
+    end
 
-v.exec('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
-v.exec('bundle install')
-v.exec('RAILS_ENV=vagrant bundle exec ruby script/start.rb start')
-#v.halt
+    def ports
+      [80]
+    end
+
+    def stop
+      #TODO implement me!
+    end
+
+  end
+
+end
 

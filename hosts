@@ -1,0 +1,6 @@
+127.0.0.1 localhost
+192.168.8.101 rabbit
+192.168.8.102 management
+192.168.8.103 targeting
+192.168.8.103 dealkeeper
+192.168.8.104 integration

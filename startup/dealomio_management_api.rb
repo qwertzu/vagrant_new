@@ -5,18 +5,20 @@ class Management < VagrantTest::Service
   class << self
 
     def run
-      vm.sudo('service mysql start')
-      vm.exec('cd /vagrant/management/')
-      vm.exec('bundle install')
-      vm.exec('cp -v config/application.yml.example config/application.yml')
-      vm.exec('cp -v config/database.yml.example config/database.yml')
-      vm.exec('cp -v config/newrelic.yml.example config/newrelic.yml')
-      vm.exec('RAILS_ENV=vagrant rake db:migrate')
-      vm.sudo('/etc/init.d/apache2 start')
+      sudo('service mysql start')
+      exec_home('bundle install')
+      exec_home('cp -v config/application.yml.example config/application.yml')
+      exec_home('cp -v config/database.yml.example config/database.yml')
+      exec_home('cp -v config/newrelic.yml.example config/newrelic.yml')
+#      exec_home('rake db:create')
+      exec_home("RAILS_ENV=#{rails_env} rake db:migrate")
+      sudo('ls /etc/apache2')
+      sudo('/etc/init.d/redis-server start')
+      sudo('/etc/init.d/apache2 start')
     end
 
     def code_directory
-      "~/#{self.name}" # TODO fetch from application.yml
+      Settings.management_path
     end
 
     def ports

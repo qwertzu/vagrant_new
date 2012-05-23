@@ -6,3 +6,4 @@ vagrant:
   management_path: '/home/bendyk/dealomio_management_api'
   targeting_path: '/home/bendyk/dealomio_targeting_api'
   dealkeeper_path: '/home/bendyk/dealomio_dealkeeper'
+  integration_path: '/home/bendyk/dealomio_integration_test/dealomio_integration_test'

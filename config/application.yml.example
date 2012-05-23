@@ -1,6 +1,9 @@
 vagrant:
   base_box: servtag-test08
-  hosts_file: '/home/weise/hosts'
-  vagrant_file: '/home/weise/vagrant_tests/Vagrantfile'
-  ip_mem: '/home/weise/vagrant_tests/ip_mem'
-  management_path: '/home/weise/dealomio_management_api'
+  hosts_file: '/home/bendyk/hosts'
+  vagrant_file: '/home/bendyk/vagrant_tests/Vagrantfile'
+  ip_mem: '/home/bendyk/vagrant_tests/ip_mem'
+  management_path: '/home/bendyk/dealomio_management_api'
+  targeting_path: '/home/bendyk/dealomio_targeting_api'
+  dealkeeper_path: '/home/bendyk/dealomio_dealkeeper'
+  integration_path: '/home/bendyk/dealomio_integration_test'

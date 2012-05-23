@@ -1,16 +1,29 @@
-require 'rubygems'
-require 'vagrant'
-require 'test_helper.rb'
+require File.expand_path(File.dirname(__FILE__) + '/../lib/vagrant_tests')
 
-dir = "/vagrant/management"
-server = :rabbit
+class Rabbit < VagrantTest::Service
 
-v=V.new(dir , server)
-v.up
-v.exec('less /etc/hosts')
-v.exec('less /vagrant/Vagrantfile')
-v.sudo('/etc/init.d/rabbitmq-server stop')
-v.sudo('/etc/init.d/rabbitmq-server start')
-#v.halt
+  class << self
+
+    def run
+      sudo('/etc/init.d/rabbitmq-server stop')
+      sudo('/etc/init.d/rabbitmq-server start')
+    end
+
+    def code_directory
+      ""
+    end
+
+    def ports
+      [80]
+    end
+
+    def stop
+      #TODO implement me!
+    end
+
+  end
+
+end
+
 
 
