@@ -5,6 +5,7 @@ GEM
       i18n (~> 0.6)
       multi_json (~> 1.0)
     archive-tar-minitar (0.5.2)
+    awesome_print (1.0.2)
     childprocess (0.3.2)
       ffi (~> 1.0.6)
     erubis (2.7.0)
@@ -32,5 +33,6 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
+  awesome_print
   settingslogic
   vagrant

@@ -1,6 +1,9 @@
 vagrant:
+  lock_file: '/tmp/vagrant_tests.lock'
   base_box: servtag-test08
   hosts_file: '/home/weise/hosts'
   vagrant_file: '/home/weise/vagrant_tests/Vagrantfile'
   ip_mem: '/home/weise/vagrant_tests/ip_mem'
   management_path: '/home/weise/dealomio_management_api'
+  targeting_path: '/home/bendyk/dealomio_targeting_api'
+  dealkeeper_path: '/home/bendyk/dealomio_dealkeeper'
