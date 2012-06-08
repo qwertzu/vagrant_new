@@ -5,7 +5,7 @@ Vagrant::Config.run do |config|
 <% config.vms.each do |vm| %>
   config.vm.define :<%=vm.name%> do |<%= vm.name %>_config|
     <%= vm.name %>_config.vm.box = "<%= vm.base_box %>"
-    <%= vm.name %>_config.vm.host_name = '<%= vm.name %>.vagrant.servtag.com'
+    <%= vm.name %>_config.vm.host_name = '<%= vm.name %>'
     <%= vm.name %>_config.vm.network :hostonly, "<%= vm.ip %>"
     <%= vm.name %>_config.vm.share_folder "vagrant", "/vagrant", "."
     <% vm.services.map(&:port_forwards).inject({}) { |hash, h| hash.merge(h) }.each_pair do |port, forward| %>

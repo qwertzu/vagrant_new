@@ -78,7 +78,7 @@ module VagrantTest
       def write_hosts(services)
         puts "create hosts file"
         hosts_file = File.open(Settings.hosts_file, 'w')
-        hosts_file.puts("127.0.0.1 localhost")
+        hosts_file.puts("127.0.0.1 localhost vagrant")
 
         services.each { |service| hosts_file.puts("#{service.ip} #{service.name}") }
         hosts_file.close

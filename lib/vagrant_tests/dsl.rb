@@ -7,7 +7,7 @@ module VagrantTest
       attr_accessor :ip, :path, :port_forwards, :vm, :rails_env
 
       def name
-        self.to_s.downcase
+        self.to_s.underscore
       end
 
       def run
@@ -15,11 +15,11 @@ module VagrantTest
       end
 
       def sudo cmd
-        vm.sudo (cmd)
+        vm.sudo(cmd)
       end
 
       def exec cmd
-        vm.exec (cmd)
+        vm.exec(cmd)
       end
 
       def exec_home cmd
@@ -45,7 +45,7 @@ module VagrantTest
 
   class EnvironmentConfiguration
 
-    attr_accessor :vms, :spec_path, :test_service  , :rails_env , :ci_rep
+    attr_accessor :vms, :spec_path, :test_service, :rails_env , :ci_rep
 
     def add_vm name, base_box = Settings.base_box
       (@vms ||= []) << (vm = VM.new(name, base_box))
@@ -73,14 +73,18 @@ module VagrantTest
       EnvironmentGenerator.generate(environment)
       environment.vms.each { |vm| vm.up}
       environment.vms.map(&:services).flatten.each do |service|
-        service.rails_env = environment.rails_env
-        service.run
+        #Process.fork {
+          service.rails_env = environment.rails_env
+          service.run
+        #}
       end
+
+      #Process.waitall
 
       environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{environment.ci_rep} bundle exec rspec #{environment.spec_path}") unless environment.test_service == nil
 
-      environment.vms.each { |vm| vm.destroy }
-      EnvironmentGenerator.delete_ips
+      #environment.vms.each { |vm| vm.destroy }
+      #EnvironmentGenerator.delete_ips
     end
 
   end

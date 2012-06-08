@@ -13,9 +13,19 @@ vagrant_test do |env|
   tar.add Targeting
   tar.add Dealkeeper
 
-  int = env.add_vm(:integration)
+  #ban = env.add_vm(:bannerserver)
+ # ban.add Bannerserver
 
-  env.test_service = int.add Integration
+  ima = env.add_vm(:imageserver)
+  ima.add Imageserver
+
+#  rep = env.add_vm(:reporting)
+#  rep.add Reporting
+
+  int = env.add_vm(:integration)
+  int.add Integration
+
+  env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= './spec/deals/'
+  env.spec_path= 'spec/deals/'
 end

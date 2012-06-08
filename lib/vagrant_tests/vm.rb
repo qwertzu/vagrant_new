@@ -35,35 +35,55 @@ module VagrantTest
 
   class VM
 
+    class << self
+      def vagrant_env
+        @vagrant_env ||= Vagrant::Environment.new
+      end
+    end
+
     attr_accessor :name, :env, :base_box, :vm, :services, :ip
 
     def initialize name, base_box
       @base_box = base_box
-      @env     = Vagrant::Environment.new
       @name    = name
-      @vm      = @env.vms[name]
+    end
+
+    def env
+      @env ||= self.class.vagrant_env
+    end
+
+    def vm
+      @vm ||= env.vms[name]
     end
 
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
+      message = ""
       begin
         vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
           print "#{data}"
+          message = data
         end
       rescue
         puts 'Caught an EXCEPTION'
+        message = nil
       end
+      message
     end
 
     def sudo(cmd)
       puts "#{vm.name}: Sudo #{cmd}"
+      message = ""
       begin
         vm.channel.sudo("#{cmd}") do |output,data|
           print "#{data}"
+          message = data
         end
       rescue
         puts 'Caught an EXCEPTION'
+        message = nil
       end
+      message
     end
 
     def add service_clazz
@@ -93,10 +113,28 @@ module VagrantTest
         puts "Finished running #{vm.name}:-up"
       end
       puts "Copy config files"
-      sudo("cp /vagrant/configs/hosts /etc/hosts")
+      sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
       sudo("cd /etc/apache2/sites-enabled && a2dissite *")
-      sudo("rm /etc/apache2/sites-available/05* &&  cp /vagrant/configs/apache_confs/* /etc/apache2/sites-available/")
-      sudo("cd /etc/apache2/sites-enabled && a2ensite *")
+      sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
+      self.services.each do |service|
+        sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
+        sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
+        service.exec_home("bundle")
+
+        begin
+          ruby_version = service.exec_home('rvm current').chomp
+          passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
+          puts passenger_version
+          raise() if !passenger_version
+          service.exec_home('passenger-install-apache2-module --auto')
+          sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/ext/apache2/mod_passenger.so /etc/apache2/symlink_passenger/passenger_modules")
+          sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version} /etc/apache2/symlink_passenger/passenger_root")
+          sudo("ln -f -s /usr/local/rvm/wrappers/#{ruby_version}/ruby /etc/apache2/symlink_passenger/passenger_ruby")
+          puts("#{service.name} runs with local gemset passenger")
+        rescue
+          puts("#{service.name} runs with global passenger")
+        end
+      end
       puts "enabled apache files"
     end
 

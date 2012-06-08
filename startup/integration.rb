@@ -11,10 +11,9 @@ class Integration < VagrantTest::Service
   class << self
 
     def run
+      exec_home("gem install bundler")
       exec_home('bundle install')
       exec_home('cp -v config/application.yml.example config/application.yml')
-      exec_home('curl -v http://admin:vagrant@management')
-      #sudo('/etc/init.d/apache2 start')
     end
 
     def code_directory

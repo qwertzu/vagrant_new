@@ -14,7 +14,7 @@ class Rabbit < VagrantTest::Service
     end
 
     def ports
-      [80]
+      [80, 55672]
     end
 
     def stop
