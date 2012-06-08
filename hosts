@@ -1,7 +1,0 @@
-127.0.0.1 localhost vagrant
-192.168.107.101 rabbit
-192.168.107.102 management
-192.168.107.103 targeting
-192.168.107.103 dealkeeper
-192.168.107.104 imageserver
-192.168.107.105 integration
