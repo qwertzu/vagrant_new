@@ -13,14 +13,17 @@ vagrant_test do |env|
   tar.add Targeting
   tar.add Dealkeeper
 
-  #ban = env.add_vm(:bannerserver)
- # ban.add Bannerserver
+  ban = env.add_vm(:bannerserver)
+  ban.add Bannerserver
 
   ima = env.add_vm(:imageserver)
   ima.add Imageserver
 
-#  rep = env.add_vm(:reporting)
-#  rep.add Reporting
+  rep = env.add_vm(:reporting)
+  rep.add Reporting
+
+  ana = env.add_vm(:analytics)
+  ana.add Analytics
 
   int = env.add_vm(:integration)
   int.add Integration
