@@ -3,7 +3,7 @@ vagrant:
   base_box: servtag-test17
   hosts_file: './hosts'
   vagrant_file: './Vagrantfile'
-  ip_mem: './../../ip_mem'
+  ip_mem: './../ip_mem'
   management_path: ''
   targeting_path: ''
   dealkeeper_path: ''
