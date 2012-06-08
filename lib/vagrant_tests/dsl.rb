@@ -1,93 +1,31 @@
 module VagrantTest
 
-  class VM
-
-    attr_accessor :services, :ip, :name, :env, :base_box
-
-    def initialize name, base_box
-      @base_box = base_box
-      @env = Vagrant::Environment.new
-      self.name = name
-      @env.vms.each do | vm_name , vm|
-        @env = vm if vm_name == name
-      end
-    end
-
-    attr_accessor :dir
-
-    def exec(cmd)
-      puts "Execute #{cmd}"
-      begin
-        @env.channel.execute(cmd) do |output,data|
-          print "#{data}"
-        end
-      rescue
-        puts 'Caught an EXCEPTION'
-      end
-    end
-
-    def sudo(cmd)
-      puts "Sudo #{cmd}"
-      begin
-        @env.channel.sudo("#{cmd}") do |output,data|
-          print "#{data}"
-        end
-      rescue
-        puts 'Caught an EXCEPTION'
-      end
-    end
-
-    def up
-      #unless @env.state == :poweroff
-      #  puts "VM #{@env.name} , #{@env.env} already running , halt VM..."
-      #  @env.halt
-      #end
-      destroy if @env.state == :running
-      unless @env.state == :running
-        puts "About to run vagrant-up..."
-        @env.up
-        puts "Finished running vagrant-up"
-      end
-      puts "Copy config files"
-      sudo("cp /vagrant/configs/hosts /etc/hosts")
-      sudo("cd /etc/apache2/sites-enabled && a2dissite *")
-      sudo("rm /etc/apache2/sites-available/05* &&  cp /vagrant/configs/apache_confs/* /etc/apache2/sites-available/")
-      sudo("cd /etc/apache2/sites-enabled && a2ensite *")
-      puts "enabled apache files"
-    end
-    def destroy
-      @env.destroy
-      puts "VM destroyed"
-    end
-
-    def halt
-      raise "Must run `vagrant up`" if !@env.created?
-      raise "Must be running!" if @env.state != :running
-      puts "About to run vagrant-halt..."
-      @env.halt
-      puts "Finished running vagrant-halt"
-    end
-
-    def add service_clazz
-      service_clazz.vm = self
-      (@services ||= []) << service_clazz
-    end
-
-  end
-
   class Service
 
     class << self
 
-      attr_accessor :ip, :path, :port_forwards, :vm
+      attr_accessor :ip, :path, :port_forwards, :vm, :rails_env
 
       def name
-        self.to_s.downcase
+        self.to_s.underscore
       end
 
       def run
 
       end
+
+      def sudo cmd
+        vm.sudo(cmd)
+      end
+
+      def exec cmd
+        vm.exec(cmd)
+      end
+
+      def exec_home cmd
+        vm.exec(cmd , "/vagrant/" + self.name)
+      end
+
 
       def code_directory
         "~/#{self.name}"
@@ -103,35 +41,50 @@ module VagrantTest
 
     end
 
-
   end
 
   class EnvironmentConfiguration
 
-    attr_accessor :vms, :spec_path, :test_vm
+    attr_accessor :vms, :spec_path, :test_service, :rails_env , :ci_rep
 
     def add_vm name, base_box = Settings.base_box
       (@vms ||= []) << (vm = VM.new(name, base_box))
       yield vm if block_given?
       vm
     end
+    def rails_env
+      @rails_env = "test" unless @rails_env
+      @rails_env
+    end
+
+    def ci_rep
+      @ci_rep = ""
+      @ci_rep = "CI_REPORTS=#{ENV['CI_REPORTS']}"  if ENV['CI_REPORTS']
+      @ci_rep
+    end
 
   end
 
   module DSL
-
     def vagrant_test
       environment = EnvironmentConfiguration.new
       yield environment
 
       EnvironmentGenerator.generate(environment)
+      environment.vms.each { |vm| vm.up}
+      environment.vms.map(&:services).flatten.each do |service|
+        #Process.fork {
+          service.rails_env = environment.rails_env
+          service.run
+        #}
+      end
 
-      environment.vms.each { |vm| vm.up }
-      environment.vms.map(&:services).flatten.each { |service| service.run }
+      #Process.waitall
 
-      environment.test_vm.exec("bundle exec rspec #{environment.spec_path}")
+      environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{environment.ci_rep} bundle exec rspec #{environment.spec_path}") unless environment.test_service == nil
 
-      environment.vms.each { |vm| vm.halt }
+      #environment.vms.each { |vm| vm.destroy }
+      #EnvironmentGenerator.delete_ips
     end
 
   end
