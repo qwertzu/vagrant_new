@@ -12,7 +12,6 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
-ip_mem
 .vagrant
 hosts
 
@@ -21,6 +20,7 @@ hosts
 _yardoc
 doc/
 
-config/application.example
 ip_mem
 Vagrantfile
+
+.idea*
