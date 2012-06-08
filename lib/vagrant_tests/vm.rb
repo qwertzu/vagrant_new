@@ -119,6 +119,7 @@ module VagrantTest
       self.services.each do |service|
         sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
         sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
+        service.exec_home("gem install bundler")
         service.exec_home("bundle")
 
         begin
