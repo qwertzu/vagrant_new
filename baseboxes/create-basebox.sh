@@ -21,11 +21,18 @@ baseboxname="servtag-test3"
 # Helpers
 #
 #######################################################
-function helper_writeinformation () {
-	echo "dol1 ok/failed=".$last_return_status
-	echo "dol2 msg=".$last_message_status
 
-	return $1
+# Format the ouput to inform the user of his configuration
+function helper_writeinformation () {
+	if [$last_return_status -eq 0] then
+		status="OK"
+	else
+		status="failed"
+	fi
+	echo $last_message_status."..............................[".$status."]"
+	#echo "dol1 ok/failed=".$last_return_status
+	#echo "dol2 msg=".$last_message_status
+	#return $1
 }
 
 #######################################################
@@ -33,28 +40,29 @@ function helper_writeinformation () {
 #	./configure-like
 #######################################################
 function configuration_checker() {
-
 	# check 1: are we in the good directory?
 	# use pwd? ls?
 	last_return_status=1
-	last_message_status="current directoy "
+	last_message_status="pending(not implemented)"
 	helper_writeinformation
 	
-	
-
 	# check 2: do we have ./veewee created?
 	# ls... easy
 
 	# check 3: do we have every software we need?
 	# Which?
 
- # Do we have an iso in */+ ?
+	# check4: would it be possible to check if the bios is correctly configured?
 
+	 # Do we have an iso in baseboxes/iso ?
 }
 
 #######################################################
 # Creation of the basebox
 #
+# Create a basebox
+# Create the definitions/yourbasebox/servtag-postinstall.sh file
+# let 
 #######################################################
 function  basebox_creation_runner() {
 	# Building the box
@@ -65,9 +73,11 @@ function  basebox_creation_runner() {
 	mv .servtag-postpostinstall.sh ./definitions/$baseboxname/.servtag-postinstall.sh
 	
 
-	# am ende von post-install ajouter une ligne: exec me post-postinstall.sh
+	# We add our work at the end of the post-install file
 	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
-	sed -i -e "s/exit*$/.servtag-postinstall.sh\nexit*$/g" definitions/test1/postinstall.sh
+	sed -i -e ':a;N;$!ba;s/\n/\\n/g' test1 #remplacing EOL by \n
+	sed -i -e "s/exit*$/`cat .servtag-postpostinstall.sh`\nexit/g" definitions/test1/postinstall.sh
+
 
 	# do it!
 	vagrant basebox build '$baseboxname'
@@ -87,7 +97,11 @@ function  basebox_creation_runner() {
 # run
 #
 #######################################################
+echo "CONFIGURATION"
+echo "============="
 configuration_checker
+echo "CREATION OF THE BASEBOX"
+echo "============="
 basebox_creation_runner
 
 exit 0
