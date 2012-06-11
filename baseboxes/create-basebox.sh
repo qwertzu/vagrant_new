@@ -6,22 +6,25 @@
 # * creation of the basebox
 # * creation of a servtag-postinstall.sh script that will be copied to definitions/your-basebox/servtag-postinstall.sh and that should be run by veewee
 # 
-# use: zuerst configure
-# after: build/make 
 #
-#	src: http://www.dejonghenico.be/unix/create-vagrant-base-boxes-veewee
+# src: http://www.dejonghenico.be/unix/create-vagrant-base-boxes-veewee
 #
-#################
+
+#######################################################
+# Script variables
+#
+#######################################################
 
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
+# The name of the basebox
 baseboxname="servtag-test3"
 
 #######################################################
 # Helpers
 #
 #######################################################
-
+#
 # Format the ouput to inform the user of his configuration
 function helper_writeinformation () {
 	if [$last_return_status -eq 0] then
@@ -37,13 +40,13 @@ function helper_writeinformation () {
 
 #######################################################
 # Verification of the system
-#	./configure-like
+#	./configure -like
 #######################################################
 function configuration_checker() {
 	# check 1: are we in the good directory?
 	# use pwd? ls?
 	last_return_status=1
-	last_message_status="pending(not implemented)"
+	last_message_status="CONFIGURATION .... pending(not implemented)"
 	helper_writeinformation
 	
 	# check 2: do we have ./veewee created?
@@ -54,15 +57,16 @@ function configuration_checker() {
 
 	# check4: would it be possible to check if the bios is correctly configured?
 
+	# check5: do we have a iso directory
+
 	 # Do we have an iso in baseboxes/iso ?
 }
 
 #######################################################
 # Creation of the basebox
 #
-# Create a basebox
-# Create the definitions/yourbasebox/servtag-postinstall.sh file
-# let 
+# * Create a basebox
+# * Inject the ./.servtag-postpostinstall.sh script at the end of ./definition/$baseboxname/postinstallation.sh
 #######################################################
 function  basebox_creation_runner() {
 	# Building the box
@@ -75,7 +79,7 @@ function  basebox_creation_runner() {
 
 	# We add our work at the end of the post-install file
 	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
-	sed -i -e ':a;N;$!ba;s/\n/\\n/g' test1 #remplacing EOL by \n
+	sed -i -e ':a;N;$!ba;s/\n/\\n/g' .servtag-postpostinstall.sh  #remplacing EOL by \n
 	sed -i -e "s/exit*$/`cat .servtag-postpostinstall.sh`\nexit/g" definitions/test1/postinstall.sh
 
 
@@ -89,7 +93,6 @@ function  basebox_creation_runner() {
 	#vagrant init 'servtag-test3'
 	#vagrant up
 	#vagrant ssh
-
 
 }
 
