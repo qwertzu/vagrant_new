@@ -69,11 +69,23 @@ function  basebox_creation_runner() {
 	# Building the box
 	vagrant basebox define $baseboxname $vagrant_template
 
+	#Adapting the preseed.cfg file
+	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg #NEW
+	sed -i -e 's/USA/Germany/g' definitions/$baseboxname/preseed.cfg #NEW
+
+	# change the username/passwort? in preseed.cfg
+
+
 	# We add our work at the end of the post-install file
 	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
-	cp .servtag-postpostinstall.sh .servtag-postpostinstall.sh.save
-	sed -i -e ':a;N;$!ba;s/\n/\\n/g' .servtag-postpostinstall.sh  #remplacing EOL by \n
-	sed -i -e "s/exit*$/`cat .servtag-postpostinstall.sh`\nexit/g" definitions/test1/postinstall.sh
+	#cp .servtag-postpostinstall.sh inject-to-postinstall.sh
+	#sed -i -e ':a;N;$!ba;s/\n/\\n/g' inject-to-postinstall.sh  #remplacing EOL by \n
+	#sed -i -e "s/exit*$/`cat inject-to-postinstall.sh`\nexit/g" definitions/$baseboxname/postinstall.sh
+
+	cp .servtag-postpostinstall.sh definitions/test1/servtag-postinstall.sh
+	sed -i -e 's/"],/"], ["servtag-postinstall.sh"]/g' definitions/test1/definition.rb
+
+	rm inject-to-postinstall.sh
 
 	# do it!
 	vagrant basebox build $baseboxname
