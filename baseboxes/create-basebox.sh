@@ -72,37 +72,25 @@ function  basebox_creation_runner() {
 	# Building the box
 	vagrant basebox define $baseboxname $vagrant_template
 
-	
-	# Copy the post-postinstall.sh script
-	mv .servtag-postpostinstall.sh ./definitions/$baseboxname/.servtag-postinstall.sh
-	
-
 	# We add our work at the end of the post-install file
 	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
 	sed -i -e ':a;N;$!ba;s/\n/\\n/g' .servtag-postpostinstall.sh  #remplacing EOL by \n
 	sed -i -e "s/exit*$/`cat .servtag-postpostinstall.sh`\nexit/g" definitions/test1/postinstall.sh
 
-
 	# do it!
-	vagrant basebox build '$baseboxname'
-
-	#starting it?
-	#vagrant basebox validate servtag-test3
-	#vagrant basebox export 'servtag-test3'
-	# vagrant box add definitions/servtag-test3/ servtag-test3.box 
-	#vagrant init 'servtag-test3'
-	#vagrant up
-	#vagrant ssh
-
+	vagrant basebox build $baseboxname
 }
 
 #######################################################
 # run
 #
 #######################################################
+echo ""
 echo "CONFIGURATION"
 echo "============="
 configuration_checker
+echo ""
+echo ""
 echo "CREATION OF THE BASEBOX"
 echo "============="
 basebox_creation_runner
