@@ -69,14 +69,22 @@ function  basebox_creation_runner() {
 	# Building the box
 	vagrant basebox define $baseboxname $vagrant_template
 
-	#Adapting the preseed.cfg file
-	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
+	#Adapting the layout
+
 #	sed -i -e 's/USA/Germany/g' definitions/$baseboxname/preseed.cfg #NEW
-	sed -i -e 's/layout string USA/layout=de_DE/g' definitions/$baseboxname/preseed.cfg #NEW
-	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/definition.rb
-	sed -i -e 's/USA/Deutschland/g' definitions/$baseboxname/definition.rb
-	sed -i -e 's/=US/=DE/g' definitions/$baseboxname/definition.rb
+
+	#sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/definition.rb
+	#sed -i -e 's/USA/Deutschland/g' definitions/$baseboxname/definition.rb
+	#sed -i -e 's/=US/=DE/g' definitions/$baseboxname/definition.rb
 #
+
+
+	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
+	sed -i -e 's/layout string USA/layout string German/g' definitions/$baseboxname/preseed.cfg #NEW
+	sed -i -e 's/method=us/method=de/g' definitions/$baseboxname/definition.rb
+	sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
+	sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
+
 
 	# change the username/passwort? in preseed.cfg
 
