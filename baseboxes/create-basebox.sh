@@ -27,15 +27,12 @@ baseboxname="servtag-test3"
 #
 # Format the ouput to inform the user of his configuration
 function helper_writeinformation () {
-	if [$last_return_status -eq 0] then
+	if [ $last_return_status == 0 ]; then
 		status="OK"
 	else
 		status="failed"
 	fi
 	echo $last_message_status."..............................[".$status."]"
-	#echo "dol1 ok/failed=".$last_return_status
-	#echo "dol2 msg=".$last_message_status
-	#return $1
 }
 
 #######################################################
@@ -89,6 +86,7 @@ echo ""
 echo "CONFIGURATION"
 echo "============="
 configuration_checker
+
 echo ""
 echo ""
 echo "CREATION OF THE BASEBOX"
