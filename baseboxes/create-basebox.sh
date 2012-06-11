@@ -18,7 +18,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname="servtag-test7"
+baseboxname="servtag-test8"
 
 #######################################################
 # Helpers
@@ -82,10 +82,8 @@ function  basebox_creation_runner() {
 	#sed -i -e ':a;N;$!ba;s/\n/\\n/g' inject-to-postinstall.sh  #remplacing EOL by \n
 	#sed -i -e "s/exit*$/`cat inject-to-postinstall.sh`\nexit/g" definitions/$baseboxname/postinstall.sh
 
-	cp .servtag-postpostinstall.sh definitions/test1/servtag-postinstall.sh
-	sed -i -e 's/"],/"], ["servtag-postinstall.sh"]/g' definitions/test1/definition.rb
-
-	rm inject-to-postinstall.sh
+	cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
+	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
 
 	# do it!
 	vagrant basebox build $baseboxname
