@@ -18,7 +18,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname="servtag-test3"
+baseboxname="servtag-test7"
 
 #######################################################
 # Helpers
@@ -71,6 +71,7 @@ function  basebox_creation_runner() {
 
 	# We add our work at the end of the post-install file
 	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
+	cp .servtag-postpostinstall.sh .servtag-postpostinstall.sh.save
 	sed -i -e ':a;N;$!ba;s/\n/\\n/g' .servtag-postpostinstall.sh  #remplacing EOL by \n
 	sed -i -e "s/exit*$/`cat .servtag-postpostinstall.sh`\nexit/g" definitions/test1/postinstall.sh
 
