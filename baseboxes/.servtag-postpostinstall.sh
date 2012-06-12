@@ -28,7 +28,7 @@ echo ""
 #}
 
 
-# Installing new software and necessary servers
+# Installing new SOFTWARES and necessary servers
 apt-get -y update
 apt-get -y upgrade
 apt-get install -y libreadline-dev 
@@ -38,23 +38,23 @@ apt-get install -y redis-server
 apt-get install -y couchdb
 apt-get install -y rabbitmq-server
 
-## Installing mysql using preseed for automatization
+## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
-echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.preseed
-echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password password $mysql_password" > mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password_again password $mysql_password" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get -y install mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
 
 
-## Installing rvm
+## Installing RVM
 ##	siehe auch https://rvm.io/rvm/install/
 apt-get install -y curl
 sudo su vagrant
 cd
 echo `pwd`
-curl -L get.rvm.io | bash -s stable --ruby
+curl -L get.rvm.io | bash -s stable --rubyapti	
 echo `which rvm`
 echo "end of: installing rvm - starting: installing cassandra"
 

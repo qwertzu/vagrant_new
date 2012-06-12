@@ -20,6 +20,9 @@ vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
 baseboxname="servtag-test8"
 
+system_password="vagrant1"
+mysql_password="vagrant1"
+
 #######################################################
 # Helpers
 #
@@ -78,25 +81,22 @@ function  basebox_creation_runner() {
 	#sed -i -e 's/=US/=DE/g' definitions/$baseboxname/definition.rb
 #
 
-
 	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
-	sed -i -e 's/layout string USA/layoutcode=de_DE/g' definitions/$baseboxname/preseed.cfg #NEW
+#	sed -i -e 's/layout string USA/layoutcode=de/g' definitions/$baseboxname/preseed.cfg #NEW
 	sed -i -e 's/method=us/method=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
 
 
-	# change the username/passwort? in preseed.cfg. system.mysql
+	# Changing the password
+	sed -i -e "s/user-password password vagrant/user-password password $system_password/g" definitions/$baseboxname/preseed.cfg
+	sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
+	sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" .servtag-postpostinstall.sh
+	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" .servtag-postpostinstall.sh
+	sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
 
-	# We add our work at the end of the post-install file
-	# cf http://www.commentcamarche.net/forum/affich-1533480-bash-insertion-d-une-ligne-dans-un-fichier
-	#cp .servtag-postpostinstall.sh inject-to-postinstall.sh
-	#sed -i -e ':a;N;$!ba;s/\n/\\n/g' inject-to-postinstall.sh  #remplacing EOL by \n
-	#sed -i -e "s/exit*$/`cat inject-to-postinstall.sh`\nexit/g" definitions/$baseboxname/postinstall.sh
-
-	
-
+	# Moving our postinstall file and saying vagrant it has to be launched
 	cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
 
