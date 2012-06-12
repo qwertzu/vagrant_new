@@ -32,11 +32,11 @@ echo ""
 apt-get -y update
 apt-get -y upgrade
 apt-get install -y libreadline-dev 
-apt-get install -y libxml2 libxml2-dev
+apt-get install -y libxml2 libxml2-dev #dev nicht installiert
 apt-get install -y apache2.2-common
 apt-get install -y redis-server
 apt-get install -y couchdb
-apt-get install -y rabbitmq-server
+apt-get install -y rabbitmq-server	# nicht installiert
 
 ## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
@@ -50,18 +50,43 @@ apt-get install -y mysql-client mysql-common mysql-server
 
 ## Installing RVM
 ##	siehe auch https://rvm.io/rvm/install/
-apt-get install -y curl
+#apt-get install -y curl
+#sudo su vagrant
+#echo `pwd`
+#curl -L get.rvm.io | bash -s stable --ruby
+#echo `which rvm`
+#echo "end of: installing rvm - starting: installing cassandra"
+
+#cf finaly https://github.com/mpapis/rvm-test-vagrant/blob/master/definitions/rvm-ubuntu-12.04-amd64/postinstall.sh
+# http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
 sudo su vagrant
-cd
-echo `pwd`
-curl -L get.rvm.io | bash -s stable --rubyapti	
-echo `which rvm`
-echo "end of: installing rvm - starting: installing cassandra"
+apt-get -y install curl gcc git-core libyaml-dev libsqlite3-dev libxml2-dev libxslt-dev libc6-dev ncurses-dev subversion
+curl -L get.rvm.io | bash -s stable
+PATH=$PATH:/usr/local/rvm/bin
+echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
+rvm install 1.9.3
+rvm alias create defult 1.9.3
+source /usr/local/rvm/environments/default
+
+curl -L get.rvm.io | bash -s stable
+PATH=$PATH:/usr/local/rvm/bin
+echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
+rvm install 1.9.3
+rvm alias create default 1.9.3
+source /usr/local/rvm/environments/default
+
+
+# TEchnic from http://pyfunc.blogspot.de/2011/11/creating-base-box-from-scratch-for.html
+# curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer
+# chmod +x rvm-installer
+# sudo ./rvm-installer --version latest
+
+
 
 #cassandra - from cassandra*.tar.gz README
 echo `pwd`
-wget http://www.apache.org/dyn/closer.cgi?path=/cassandra/1.1.1/apache-cassandra-1.1.1-bin.tar.gz
-tar -zxvf apache-cassandra-1.1.1-bin.tar.gz
+wget -t 3 'http://mirror.netcologne.de/apache.org/cassandra/0.8.10/apache-cassandra-0.8.10-src.tar.gz '
+tar -zxvf apache-cassandra-0.8.10-bin.tar.gz
 sudo mkdir -p /var/log/cassandra
 sudo chown -R `whoami` /var/log/cassandra
 sudo mkdir -p /var/lib/cassandra
@@ -69,6 +94,13 @@ sudo chown -R `whoami` /var/lib/cassandra
 
 echo `whoami`	#root
 echo `pwd`	#/tmp   !
+
+#node.js
+wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
+tar -zxvf node-v0.6.19.tar.gz
+# make test
+
+
 
 
 # removing /etc/udev/persisent-net.rules

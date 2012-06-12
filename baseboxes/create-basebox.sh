@@ -84,10 +84,6 @@ function  basebox_creation_runner() {
 	sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
 
-	# Changing the hostname
-	sed -i -e "s/get_hostname string unassigned-hostname/get_hostname string $baseboxname/g" definitions/$baseboxname/definition.rb
-
-
 	# Moving our postinstall file and saying vagrant it has to be launched
 	cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
@@ -96,12 +92,16 @@ function  basebox_creation_runner() {
 	# Changing the password
 	sed -i -e "s/user-password password vagrant/user-password password $system_password/g" definitions/$baseboxname/preseed.cfg
 	sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
-	sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.rb
-	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.rb
+	sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
+	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
 	# Just do it!
 	vagrant basebox build $baseboxname
+
+	#Post-servtag-postpostinstall
+	# copying datas with vagrrant scp
+	# vagrant ssh do: untar copy install
 }
 
 #######################################################
