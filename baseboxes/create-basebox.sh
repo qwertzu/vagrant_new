@@ -80,13 +80,13 @@ function  basebox_creation_runner() {
 
 
 	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
-	sed -i -e 's/layout string USA/layout string German/g' definitions/$baseboxname/preseed.cfg #NEW
+	sed -i -e 's/layout string USA/layoutcode=de_DE/g' definitions/$baseboxname/preseed.cfg #NEW
 	sed -i -e 's/method=us/method=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
 
 
-	# change the username/passwort? in preseed.cfg
+	# change the username/passwort? in preseed.cfg. system.mysql
 
 
 	# We add our work at the end of the post-install file
@@ -95,9 +95,10 @@ function  basebox_creation_runner() {
 	#sed -i -e ':a;N;$!ba;s/\n/\\n/g' inject-to-postinstall.sh  #remplacing EOL by \n
 	#sed -i -e "s/exit*$/`cat inject-to-postinstall.sh`\nexit/g" definitions/$baseboxname/postinstall.sh
 
+	
+
 	cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
-
 
 	# do it!
 	vagrant basebox build $baseboxname
