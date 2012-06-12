@@ -40,8 +40,8 @@ apt-get install -y rabbitmq-server
 
 ## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
-echo "mysql-server-5.1 mysql-server/root_password password $mysql_password" > mysql.preseed
-echo "mysql-server-5.1 mysql-server/root_password_again password $mysql_password" >> mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get -y install mysql-server
