@@ -73,7 +73,7 @@ function  basebox_creation_runner() {
 	# Creating the configuration files of the box
 	vagrant basebox define $baseboxname $vagrant_template
 
-	# Adapting the layout
+	# Adapting the layout TODO
 #	sed -i -e 's/USA/Germany/g' definitions/$baseboxname/preseed.cfg #NEW
 	#sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/definition.rb
 	#sed -i -e 's/USA/Deutschland/g' definitions/$baseboxname/definition.rb
@@ -98,10 +98,6 @@ function  basebox_creation_runner() {
 
 	# Just do it!
 	vagrant basebox build $baseboxname
-
-	#Post-servtag-postpostinstall
-	# copying datas with vagrrant scp
-	# vagrant ssh do: untar copy install
 }
 
 #######################################################
