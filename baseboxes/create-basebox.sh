@@ -18,9 +18,9 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname="servtag-test8"
+baseboxname="servtag-test9"
 
-system_password="vagrant1" #TODO ändern für vagrant
+system_password="vagrant1" #TODO ändern für vagrantg
 mysql_password="vagrant1" #TODO ändern für vagrant
 
 
@@ -98,6 +98,11 @@ function  basebox_creation_runner() {
 
 	# Just do it!
 	vagrant basebox build $baseboxname
+
+	#
+	vagrant basebox export $baseboxname
+	vagrant box add $baseboxname ./$baseboxname.box 
+#	vagrant up management # bevor: editieren Vagrantfile und lassen management
 }
 
 #######################################################
