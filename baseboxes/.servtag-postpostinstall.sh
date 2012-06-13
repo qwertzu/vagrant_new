@@ -35,17 +35,24 @@ sudo apt-get install cassandra	# starten: sudo services cassandra start
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
 sudo su vagrant
 apt-get -y install curl gcc git-core libyaml-dev libsqlite3-dev libxml2-dev libxslt-dev libc6-dev ncurses-dev subversion
+su vagrant
 curl -L get.rvm.io | bash -s stable
-PATH=$PATH:/usr/local/rvm/bin
-echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
-rvm install 1.9.3
-rvm alias create defult 1.9.3
-source /usr/local/rvm/environments/default
+#PATH=$PATH:/usr/local/rvm/bin
+#echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
+#rvm install 1.9.2-p320
+#rvm alias create default 1.9.2-p320
+#source /usr/local/rvm/environments/default
+#rvm install 1.9.2-p320
+#rvm use 1.9.2-p320
+sudo adduser vagrant rvm
 
 ## ruby version
 rvm install 1.9.2-p320
 rvm use 1.9.2-p320
 gem install bundler rubygems-bundler rvm rake
+echo "export rvm_trust_rvmrcs_flag=1" >.rvmrc
+chmod 664 .rvmrc
+
 
 # rvm-alternatif from http://pyfunc.blogspot.de/2011/11/creating-base-box-from-scratch-for.html
 # curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer
@@ -54,8 +61,8 @@ gem install bundler rubygems-bundler rvm rake
 
 
 #node.js
-wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
-tar -zxvf node-v0.6.19.tar.gz
+#wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
+#tar -zxvf node-v0.6.19.tar.gz
 # make test
 
 # cleaning up
