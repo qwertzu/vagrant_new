@@ -1,5 +1,6 @@
 # Here is the configuration of virtual machine for servtag.
 # This code will be or has been copied from baseboxes/.servtag-postpostinstall.sh to baseboxes/definitions/your_basebox_name/post-installation.sh
+# It will be executed at the end of the basebox installation
 
 echo ""
 echo ""
@@ -29,7 +30,7 @@ echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get -y install mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
-sudo apt-get install cassandra	# starten: sudo services cassandra start
+apt-get install cassandra	# starten: sudo services cassandra start
 
 ## Installing RVM
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
@@ -47,18 +48,17 @@ curl -L get.rvm.io | bash -s stable
 sudo adduser vagrant rvm
 
 ## ruby version
+su vagrant
 rvm install 1.9.2-p320
 rvm use 1.9.2-p320
 gem install bundler rubygems-bundler rvm rake
 echo "export rvm_trust_rvmrcs_flag=1" >.rvmrc
 chmod 664 .rvmrc
 
-
 # rvm-alternatif from http://pyfunc.blogspot.de/2011/11/creating-base-box-from-scratch-for.html
 # curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer
 # chmod +x rvm-installer
 # sudo ./rvm-installer --version latest
-
 
 #node.js
 #wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'

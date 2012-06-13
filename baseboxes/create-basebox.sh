@@ -18,9 +18,9 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname="servtag-test10"
+baseboxname='servtag-test10'
 
-system_password="vagrant1" #TODO ändern für vagrantg
+system_password="vagrant1" #TODO ändern für vagrant
 mysql_password="vagrant1" #TODO ändern für vagrant
 
 
@@ -28,6 +28,14 @@ mysql_password="vagrant1" #TODO ändern für vagrant
 # Helpers
 #
 #######################################################
+#
+# clean the variable between 2 call
+function clean_informations () {
+	last_return_status=1
+	status="failed"
+	last_message_status="void"
+}
+
 #
 # Format the ouput to inform the user of his configuration
 function helper_writeinformation () {
@@ -37,6 +45,7 @@ function helper_writeinformation () {
 		status="failed"
 	fi
 	echo $last_message_status."..............................[".$status."]"
+	clean_informations
 }
 
 #######################################################
@@ -47,20 +56,37 @@ function configuration_checker() {
 	# check 1: are we in the good directory?
 	# use pwd? ls?
 	last_return_status=1
-	last_message_status="CONFIGURATION .... pending(not implemented)"
+	last_message_status="CONFIGURATION ........................... pending(not implemented)"
 	helper_writeinformation
-	
-	# check 2: do we have ./veewee created?
+
+	# check 2: do we have ./baseboxes created?
 	# ls... easy
 
 	# check 3: do we have every software we need?
-	# Which?
+	tmp=""
+	tmp=`which vagrant`
+	tmp2=""
+	tmp2=`which veewee`
+	last_message_status="vagrant and veewee are installed? ................................"
+	if [ $tmp -ne "" && $tmp2 -ne ""]; then
+		$last_return_status=0
+	else
+		$last_return_status=1
+	fi
 
 	# check4: would it be possible to check if the bios is correctly configured?
 
 	# check5: do we have a iso directory
 
-	 # Do we have an iso in baseboxes/iso ?
+	# Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
+	last_message_status="basebox_name equality in this script and application.yml ........."
+	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
+	if [ $var -eq $baseboxname]; then
+		$last_return_status=0
+	else
+		$last_return_status=1
+	fi
+	helper_writeinformation
 }
 
 #######################################################
