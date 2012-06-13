@@ -18,7 +18,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname="servtag-test9"
+baseboxname="servtag-test10"
 
 system_password="vagrant1" #TODO ändern für vagrantg
 mysql_password="vagrant1" #TODO ändern für vagrant
