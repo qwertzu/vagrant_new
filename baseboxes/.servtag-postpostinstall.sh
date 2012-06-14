@@ -17,7 +17,7 @@ apt-get -y update
 apt-get -y upgrade
 apt-get install -y libreadline-dev 
 apt-get install -y libxml2 libxml2-dev
-#apt-get install -y apache2 #apache2-mpm-worker apache2-prefork-dev apache2-utils apache2.2-bin apache2.2-common
+apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
 apt-get install -y redis #redis-server
 apt-get install -y couchdb python-couchdb
 apt-get install -y rabbitmq-server
@@ -40,28 +40,12 @@ su vagrant -l -c 'curl -L get.rvm.io > rvm-installer'
 su vagrant -l -c 'chmod +x rvm-installer'
 su vagrant -l -c './rvm-installer'
 su vagrant -l -c 'rvm use 1.9.2-p320 --install'
-su vagrant -l -c "gem install bundler rubygems-bundler rvm rake rspec"
+su vagrant -l -c "rvm use 1.9.2-p320 && gem install bundler rubygems-bundler rvm rake rspec"
 su vagrant -l -c "echo 'export rvm_trust_rvmrcs_flag=1' >.rvmrc"
 su vagrant -l -c "chmod 664 .rvmrc"
 
 sudo adduser vagrant rvm
 sudo adduser root rvm
-
-#PATH=$PATH:/usr/local/rvm/bin
-#echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
-#rvm install 1.9.2-p320
-#rvm alias create default 1.9.2-p320
-#source /usr/local/rvm/environments/default
-#rvm install 1.9.2-p320
-#rvm use 1.9.2-p320
-## ruby version
-#su vagrant -l -c "rvm install 1.9.2-p320"
-#su vagrant -l -c  "rvm use 1.9.2-p320"
-
-# rvm-alternatif from http://pyfunc.blogspot.de/2011/11/creating-base-box-from-scratch-for.html
-# curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer
-# chmod +x rvm-installer
-# sudo ./rvm-installer --version latest
 
 #node.js
 #wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
@@ -73,6 +57,8 @@ rm *.tar.gz
 rm *.tgz
 rm *.sh
 rm *.preseed
+
+echo "v donnerstag abend" > version
 
 # removing /etc/udev/persisent-net.rules
 #sed -i -e 's/^SUBSYSTEM/^#SUBSYSTEM/g' /etc/udev/rules.d/70-persistent-cd.rules # *cd oder *rules?

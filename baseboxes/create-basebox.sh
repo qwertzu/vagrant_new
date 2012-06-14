@@ -18,7 +18,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='servtag-test10'
+baseboxname='servtag-test11'
 
 system_password="vagrant1" #TODO ändern für vagrant
 mysql_password="vagrant1" #TODO ändern für vagrant
@@ -99,13 +99,8 @@ function  basebox_creation_runner() {
 	# Creating the configuration files of the box
 	vagrant basebox define $baseboxname $vagrant_template
 
-	# Adapting the layout TODO
-#	sed -i -e 's/USA/Germany/g' definitions/$baseboxname/preseed.cfg #NEW
-	#sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/definition.rb
-	#sed -i -e 's/USA/Deutschland/g' definitions/$baseboxname/definition.rb
-	#sed -i -e 's/=US/=DE/g' definitions/$baseboxname/definition.rb
+	# Adapting the layout
 	sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
-#	sed -i -e 's/layout string USA/layoutcode=de/g' definitions/$baseboxname/preseed.cfg #NEW
 	sed -i -e 's/method=us/method=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
 	sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
@@ -122,12 +117,36 @@ function  basebox_creation_runner() {
 	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
+	#changing the way ruby is installed
+# .*$
+#sed -i -e "s/Install Ruby from source in.*Ruby, RubyGems, and Chef\/Puppet are visible/HAS BEEEN DELETED/g" definitions/$baseboxname/postinstall.sh
+
+  sed -i -e "s/wget http:\/\/ftp.ruby-lang.org\/pub\/ruby\/1.9\/ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/tar xvzf ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/cd ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/.\/configure --prefix=\/opt\/ruby//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/make install//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/^make//g" definitions/$baseboxname/postinstall.sh
+  sed -i -e "s/rm -rf ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
+# Install RubyGems 1.7.2
+	sed -i -e "s/wget http:\/\/production.cf.rubygems.org\/rubygems\/rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/tar xzf rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/cd rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/\/opt\/ruby\/bin\/ruby setup.rb//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/^cd \.\.$//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/rm -rf rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
+# Installing chef & Puppet
+	sed -i -e "s/\/opt\/ruby\/bin\/gem install chef --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
+	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
+	
 	# Just build it!
 	vagrant basebox build $baseboxname
 
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
+	vagrant reload
 	#	vagrant up management # bevor: editieren Vagrantfile und lassen management
 }
 
