@@ -68,12 +68,12 @@ function configuration_checker() {
 	tmp2=""
 	tmp2=`which veewee`
 	last_message_status="vagrant and veewee are installed? ................................"
-	if [ $tmp -ne "" && $tmp2 -ne ""]; then
-		$last_return_status=0
+	if [ $tmp != "" -a $tmp2 != "" ]; then
+		last_return_status=0
 	else
-		$last_return_status=1
+		last_return_status=1
 	fi
-
+	helper_writeinformation
 	# check4: would it be possible to check if the bios is correctly configured?
 
 	# check5: do we have a iso directory
@@ -81,10 +81,10 @@ function configuration_checker() {
 	# Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
 	last_message_status="basebox_name equality in this script and application.yml ........."
 	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
-	if [ $var -eq $baseboxname]; then
-		$last_return_status=0
+	if [ $var != $baseboxname ]; then
+		last_return_status=0
 	else
-		$last_return_status=1
+		last_return_status=1
 	fi
 	helper_writeinformation
 }
@@ -115,20 +115,20 @@ function  basebox_creation_runner() {
 	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
 
 
-	# Changing the password
+	# Changing the passwords
 	sed -i -e "s/user-password password vagrant/user-password password $system_password/g" definitions/$baseboxname/preseed.cfg
 	sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
 	sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
-	# Just do it!
+	# Just build it!
 	vagrant basebox build $baseboxname
 
-	#
+	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
-#	vagrant up management # bevor: editieren Vagrantfile und lassen management
+	#	vagrant up management # bevor: editieren Vagrantfile und lassen management
 }
 
 #######################################################

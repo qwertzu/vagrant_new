@@ -24,8 +24,8 @@ apt-get install -y rabbitmq-server
 
 ## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
-echo "mysql-server-5.1 mysql-server/root_password password vagrant1" > mysql.preseed
-echo "mysql-server-5.1 mysql-server/root_password_again password vagrant1" >> mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.preseed
+echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get -y install mysql-server
@@ -34,10 +34,19 @@ apt-get install cassandra	# starten: sudo services cassandra start
 
 ## Installing RVM
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
-sudo su vagrant
-apt-get -y install curl gcc git-core libyaml-dev libsqlite3-dev libxml2-dev libxslt-dev libc6-dev ncurses-dev subversion
-su vagrant
-curl -L get.rvm.io | bash -s stable
+apt-get -y install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion g++
+#su vagrant
+su vagrant -l -c 'curl -L get.rvm.io > rvm-installer'
+su vagrant -l -c 'chmod +x rvm-installer'
+su vagrant -l -c './rvm-installer'
+su vagrant -l -c 'rvm use 1.9.2-p320 --install'
+su vagrant -l -c "gem install bundler rubygems-bundler rvm rake rspec"
+su vagrant -l -c "echo 'export rvm_trust_rvmrcs_flag=1' >.rvmrc"
+su vagrant -l -c "chmod 664 .rvmrc"
+
+sudo adduser vagrant rvm
+sudo adduser root rvm
+
 #PATH=$PATH:/usr/local/rvm/bin
 #echo "gem: --no-ri --no-rdoc" | tee /home/vagrant/.gemrc > /root/.gemrc
 #rvm install 1.9.2-p320
@@ -45,15 +54,9 @@ curl -L get.rvm.io | bash -s stable
 #source /usr/local/rvm/environments/default
 #rvm install 1.9.2-p320
 #rvm use 1.9.2-p320
-sudo adduser vagrant rvm
-
 ## ruby version
-su vagrant
-rvm install 1.9.2-p320
-rvm use 1.9.2-p320
-gem install bundler rubygems-bundler rvm rake
-echo "export rvm_trust_rvmrcs_flag=1" >.rvmrc
-chmod 664 .rvmrc
+#su vagrant -l -c "rvm install 1.9.2-p320"
+#su vagrant -l -c  "rvm use 1.9.2-p320"
 
 # rvm-alternatif from http://pyfunc.blogspot.de/2011/11/creating-base-box-from-scratch-for.html
 # curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer
