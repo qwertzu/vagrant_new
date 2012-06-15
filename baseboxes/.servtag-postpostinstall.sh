@@ -49,14 +49,14 @@ sudo adduser vagrant rvm
 sudo adduser root rvm
 
 ## Installing dependencies for vagrant_tests
-apt-get install -y libqt4-dev libqtwebkit-dev #needed fom gem capybara-webkit
-apt-get install -y libmysql-ruby	      #needed from gem mysql2 ... ist eigentlich libmysql-ruby1.8
-apt-get install -y libmagick9-dev
+apt-get install -y libqt4-dev libqtwebkit-dev # needed fom gem capybara-webkit
+apt-get install -y libmysql-ruby	      # needed from gem mysql2
+apt-get install -y libmagick9-dev	      # needed from gem rmagick
 
 #node.js
-#wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
-#tar -zxvf node-v0.6.19.tar.gz
-# make test
+su vagrant -l -c "git clone git://github.com/joyent/node.git"
+su vagrant -l -c "cd node && git checkout v0.4.9"
+cd node && ./configure && make && make install
 
 # cleaning up
 rm *.tar.gz
@@ -64,3 +64,4 @@ rm *.tgz
 rm *.sh
 rm *.preseed
 rm rvm-installer
+rm -rf node/

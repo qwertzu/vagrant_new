@@ -14,7 +14,8 @@ class Management < VagrantTest::Service
 #      exec_home('rake db:create')
       exec_home("RAILS_ENV=#{rails_env} rake db:migrate")
       sudo('/etc/init.d/redis-server start')
-      sudo('/etc/init.d/apache2 start')
+      #sudo('/etc/init.d/apache2 start')
+      exec_home('rvmsudo passenger start -p80 -d --user vagrant -e vagrant')
     end
 
     def code_directory
