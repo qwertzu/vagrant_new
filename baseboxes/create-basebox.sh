@@ -2,23 +2,21 @@
 #
 # Can also be started by ../script/basebox-creation
 #
-# Script for creation of the basebox with veewee.
+# Script for configuration and installation of the basebox-we-need with veewee.
 # * creation of the basebox
 # * creation of a servtag-postinstall.sh script that will be copied to definitions/your-basebox/servtag-postinstall.sh and that should be run by veewee
 # 
 #
 # src: http://www.dejonghenico.be/unix/create-vagrant-base-boxes-veewee
-#
 
 #######################################################
 # Script variables
 #
 #######################################################
-
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='servtag-test11'
+baseboxname='servtag-test12'
 
 system_password="vagrant1" #TODO ändern für vagrant
 mysql_password="vagrant1" #TODO ändern für vagrant
@@ -53,11 +51,6 @@ function helper_writeinformation () {
 #	./configure -like
 #######################################################
 function configuration_checker() {
-	# check 1: are we in the good directory?
-	# use pwd? ls?
-	last_return_status=1
-	last_message_status="CONFIGURATION ........................... pending(not implemented)"
-	helper_writeinformation
 
 	# check 2: do we have ./baseboxes created?
 	# ls... easy
@@ -74,11 +67,10 @@ function configuration_checker() {
 		last_return_status=1
 	fi
 	helper_writeinformation
+
 	# check4: would it be possible to check if the bios is correctly configured?
-
 	# check5: do we have a iso directory
-
-	# Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
+	# check6: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
 	last_message_status="basebox_name equality in this script and application.yml ........."
 	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
 	if [ $var != $baseboxname ]; then
@@ -86,6 +78,12 @@ function configuration_checker() {
 	else
 		last_return_status=1
 	fi
+	helper_writeinformation
+
+	# check 1: are we in the good directory?
+	# use pwd? ls?
+	last_return_status=1
+	last_message_status="CONFIGURATION ........................... pending(not implemented)"
 	helper_writeinformation
 }
 
@@ -109,7 +107,6 @@ function  basebox_creation_runner() {
 	cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
 
-
 	# Changing the passwords
 	sed -i -e "s/user-password password vagrant/user-password password $system_password/g" definitions/$baseboxname/preseed.cfg
 	sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
@@ -117,37 +114,31 @@ function  basebox_creation_runner() {
 	sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 	sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
-	#changing the way ruby is installed
-# .*$
-#sed -i -e "s/Install Ruby from source in.*Ruby, RubyGems, and Chef\/Puppet are visible/HAS BEEEN DELETED/g" definitions/$baseboxname/postinstall.sh
-
-  sed -i -e "s/wget http:\/\/ftp.ruby-lang.org\/pub\/ruby\/1.9\/ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
+	#changing the way ruby is installed (deleted in postinstall, properly afterwards in servtag-postinstall.sh)
+	sed -i -e "s/wget http:\/\/ftp.ruby-lang.org\/pub\/ruby\/1.9\/ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/tar xvzf ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/cd ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/.\/configure --prefix=\/opt\/ruby//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/make install//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/^make//g" definitions/$baseboxname/postinstall.sh
-  sed -i -e "s/rm -rf ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
-# Install RubyGems 1.7.2
+	sed -i -e "s/rm -rf ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/wget http:\/\/production.cf.rubygems.org\/rubygems\/rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/tar xzf rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/cd rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/\/opt\/ruby\/bin\/ruby setup.rb//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/^cd \.\.$//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/rm -rf rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
-# Installing chef & Puppet
 	sed -i -e "s/\/opt\/ruby\/bin\/gem install chef --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
-	# Just build it!
+	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
 	vagrant basebox build $baseboxname
 
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
 	vagrant reload
-	#	vagrant up management # bevor: editieren Vagrantfile und lassen management
 }
 
 #######################################################

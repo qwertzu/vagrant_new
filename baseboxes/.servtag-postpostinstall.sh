@@ -32,6 +32,7 @@ apt-get -y install mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
 apt-get install cassandra	# starten: sudo services cassandra start
 
+
 ## Installing RVM
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
 apt-get -y install build-essential openssl libreadline6 libreadline6-dev curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion g++
@@ -47,6 +48,11 @@ su vagrant -l -c "chmod 664 .rvmrc"
 sudo adduser vagrant rvm
 sudo adduser root rvm
 
+## Installing dependencies for vagrant_tests
+apt-get install -y libqt4-dev libqtwebkit-dev #needed fom gem capybara-webkit
+apt-get install -y libmysql-ruby	      #needed from gem mysql2
+
+
 #node.js
 #wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
 #tar -zxvf node-v0.6.19.tar.gz
@@ -58,7 +64,7 @@ rm *.tgz
 rm *.sh
 rm *.preseed
 
-echo "v donnerstag abend" > version
+echo "v freitag morgen" > version
 
 # removing /etc/udev/persisent-net.rules
 #sed -i -e 's/^SUBSYSTEM/^#SUBSYSTEM/g' /etc/udev/rules.d/70-persistent-cd.rules # *cd oder *rules?

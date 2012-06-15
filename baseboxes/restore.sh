@@ -2,13 +2,14 @@
 # 
 # Destroy all the basebox and box we create
 
-name="servtag-test10"
+name="servtag-test12"
+vagrant halt
 cd .. && vagrant destroy
 
 vagrant basebox destroy $name
 
-rm -rf baseboxes/definitions/$name
-rm baseboxes/$namebaseboxes.box
+rm -rf definitions/$name
+rm $namebaseboxes.box
 
 vagrant box remove $name
 
