@@ -50,8 +50,8 @@ sudo adduser root rvm
 
 ## Installing dependencies for vagrant_tests
 apt-get install -y libqt4-dev libqtwebkit-dev #needed fom gem capybara-webkit
-apt-get install -y libmysql-ruby	      #needed from gem mysql2
-
+apt-get install -y libmysql-ruby	      #needed from gem mysql2 ... ist eigentlich libmysql-ruby1.8
+apt-get install -y libmagick9-dev
 
 #node.js
 #wget 'http://nodejs.org/dist/v0.6.19/node-v0.6.19.tar.gz'
@@ -63,10 +63,4 @@ rm *.tar.gz
 rm *.tgz
 rm *.sh
 rm *.preseed
-
-echo "v freitag morgen" > version
-
-# removing /etc/udev/persisent-net.rules
-#sed -i -e 's/^SUBSYSTEM/^#SUBSYSTEM/g' /etc/udev/rules.d/70-persistent-cd.rules # *cd oder *rules?
-
-# disabling xserver-xorg
+rm rvm-installer
