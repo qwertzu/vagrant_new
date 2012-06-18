@@ -25,3 +25,8 @@ Vagrantfile
 
 .idea/
 hosts
+
+# vagrant und veewee configuration
+baseboxes/definitions/
+baseboxes/*.box
+*.iso
