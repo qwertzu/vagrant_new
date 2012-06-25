@@ -23,10 +23,8 @@ class Management < VagrantTest::Service
 
 
       sudo('/etc/init.d/redis-server start')
-      #sudo('/etc/init.d/apache2 start')
       sudo('lsof -i :80')
       exec_home_non_blocking('rvmsudo passenger start -p80 -d --user vagrant -e vagrant &')
-      #exec_home_non_blocking('cd && passenger start -p3000')
     end
 
     def code_directory

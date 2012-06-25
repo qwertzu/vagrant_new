@@ -11,36 +11,6 @@ module VagrantTest
         free_ips   = get_free_ips(config.vms.size)
         free_ports = get_free_ports(services.map { |service| service.ports.size }.sum)
 
-        # puts "\n\n\n\n\n"+services.inspect+" "+free_ips.inspect+"\n\n\n\n\n"
-        # modfiying the application.yml of the project, according to the found result
-        # ex: will write everywhere management_base_url: http://192.168.28.101:3000
-        ## Creating all the object related to the yaml files
-        # settings_rabbit = Settingslogic.new()
-        # puts File.dirname(__FILE__) + '/../.' + Settings.management_path+"/config/application.yml"
-        # settings_management = Settingslogic.new(File.dirname(__FILE__) + '/../.' + Settings.management_path+"/config/application.yml")
-        # settings_targeting = Settingslogic.new(File.dirname(__FILE__) + '/../.' + Settings.targeting_path+"/config/application.yml")
-        # settings_dealkeeper = Settingslogic.new(File.dirname(__FILE__) + '/../.' + Settings.dealkeeper_path+"/config/dealkeeper.yml")
-        # settings_integration = Settingslogic.new(File.dirname(__FILE__) + '/../.' + Settings.integration_path+"/config/application.yml")
-        #
-        # services.each{ |service|
-        #  case service.to_s
-        #    when 'Rabbit'
-        #      puts "Rabbit"
-        #      settings_integration.vagrant.rabbit_base_url = "modified" #TODO
-        #    when 'Management'
-        #      puts "Management"
-        #    when 'Targeting'
-        #      puts "Targeting"
-        #    when 'Dealkeeper'
-        #      puts "Dealkeeper"
-        #    when 'Integration'
-        #      puts "k 2"
-        #    else
-        #      puts "default case"
-        #  end
-        # }
-
-
         config.vms.each do |vm|
           vm.ip = free_ips.shift
           vm.services.each do |service|

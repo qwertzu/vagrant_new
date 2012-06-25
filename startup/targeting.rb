@@ -12,8 +12,6 @@ class Targeting < VagrantTest::Service
       exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
       sudo('/etc/init.d/redis-server start')
 
-      #sudo('/etc/init.d/apache2 start')
-
       exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p4567 --user=vagrant &")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_targeting.rb -p 80 &")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/targeting_publisher_consumer_daemon start &")
