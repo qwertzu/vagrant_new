@@ -61,6 +61,9 @@ cd node && ./configure && make && make install
 
 echo "v Montag.Mittag" > version
 
+# stopping services
+services apache2 stop
+
 # cleaning up
 rm *.tar.gz
 rm *.tgz
