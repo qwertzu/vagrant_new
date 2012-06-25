@@ -12,17 +12,21 @@ class Management < VagrantTest::Service
       exec_home('cp -v config/database.yml.example config/database.yml')
       exec_home('cp -v config/newrelic.yml.example config/newrelic.yml')
 
+      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database deal_management_vagrant"')
 
-      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e \'create database deal_management_vagrant" ' )
+
+      exec_home("RAILS_ENV=#{rails_env} rake db:migrate")
       exec_home("mysql -u"+Settings.mysql_username+" -D deal_management_vagrant -p"+Settings.mysql_password+" -e \"insert into users(id, email,  encrypted_password, authentication_token, is_admin, created_at, updated_at) values('12345', 'vagrant@radcarpet.com', '$2a$10$WxaXM1KwJqBQBwqKa80ppOjp8fRjQVs6ZOmy55qXF9fXG.ZfQ3S5y',  'JqqDmevPwzXGeLVgs99p', 1, '2012-06-15 15:09:18', '2012-06-15 15:09:18');\"")
-      exec_home("mysql -u"+Settings.mysql_username+" -D  deal_management_vagrant -p"+Settings.mysql_password+" -e \"insert into users(id, email,  encrypted_password, authentication_token, is_admin, created_at, updated_at) values('12346', 'sandner@servtag.com', '$2a$10$WxaXM1KwJqBQBwqKa80ppOjp8fRjQVs6ZOmy55qXF9fXG.ZfQ3S5y', 'wpAsxZnzq5BA1jnTDLzm', 0, '2012-06-15 15:09:18', '2012-06-15 15:09:18');\"")
+      exec_home("mysql -u"+Settings.mysql_username+" -D deal_management_vagrant -p"+Settings.mysql_password+" -e \"insert into users(id, email,  encrypted_password, authentication_token, is_admin, created_at, updated_at) values('12346', 'sandner@servtag.com', '$2a$10$WxaXM1KwJqBQBwqKa80ppOjp8fRjQVs6ZOmy55qXF9fXG.ZfQ3S5y', 'wpAsxZnzq5BA1jnTDLzm', 0, '2012-06-15 15:09:18', '2012-06-15 15:09:18');\"")
 
       exec_home("rake db:migrate:reset")
-      exec_home("RAILS_ENV=#{rails_env} rake db:migrate")
 
 
       sudo('/etc/init.d/redis-server start')
-      sudo('/etc/init.d/apache2 start')
+      #sudo('/etc/init.d/apache2 start')
+      sudo('lsof -i :80')
+      exec_home_non_blocking('rvmsudo passenger start -p80 -d --user vagrant -e vagrant &')
+      #exec_home_non_blocking('cd && passenger start -p3000')
     end
 
     def code_directory

@@ -42,6 +42,7 @@ su vagrant -l -c 'chmod +x rvm-installer'
 su vagrant -l -c './rvm-installer'
 su vagrant -l -c 'rvm use 1.9.2-p320 --install'
 su vagrant -l -c "rvm use 1.9.2-p320 && gem install bundler rubygems-bundler rvm rake rspec"
+su vagrant -l -c "rvm use 1.9.2-p320 && gem install passenger"
 su vagrant -l -c "echo 'export rvm_trust_rvmrcs_flag=1' >.rvmrc"
 su vagrant -l -c "chmod 664 .rvmrc"
 

@@ -114,11 +114,11 @@ module VagrantTest
       end
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
-      sudo("cd /etc/apache2/sites-enabled && a2dissite *")
-      sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
+      #sudo("cd /etc/apache2/sites-enabled && a2dissite *")
+      #sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
       self.services.each do |service|
-        sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
-        sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
+       # sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
+       # sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
         service.exec_home("bundle")
 
         begin
@@ -127,9 +127,9 @@ module VagrantTest
           puts passenger_version
           raise() if !passenger_version
           service.exec_home('passenger-install-apache2-module --auto')
-          sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/ext/apache2/mod_passenger.so /etc/apache2/symlink_passenger/passenger_modules")
-          sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version} /etc/apache2/symlink_passenger/passenger_root")
-          sudo("ln -f -s /usr/local/rvm/wrappers/#{ruby_version}/ruby /etc/apache2/symlink_passenger/passenger_ruby")
+          #sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/ext/apache2/mod_passenger.so /etc/apache2/symlink_passenger/passenger_modules")
+          #sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version} /etc/apache2/symlink_passenger/passenger_root")
+          #sudo("ln -f -s /usr/local/rvm/wrappers/#{ruby_version}/ruby /etc/apache2/symlink_passenger/passenger_ruby")
           puts("#{service.name} runs with local gemset passenger")
         rescue
           puts("#{service.name} runs with global passenger")

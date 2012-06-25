@@ -26,6 +26,10 @@ module VagrantTest
         vm.exec(cmd , "/vagrant/" + self.name)
       end
 
+      # TODO  - sich versichern, dass die ouput auf dem Console geschrieben wird
+      def exec_home_non_blocking cmd
+        vm.exec(cmd +" & ", "/vagrant/" + self.name)
+      end
 
       def code_directory
         "~/#{self.name}"

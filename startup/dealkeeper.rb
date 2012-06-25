@@ -8,7 +8,7 @@ class Dealkeeper < VagrantTest::Service
       exec_home('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
       exec_home("gem install bundler")
       exec_home('bundle install')
-      exec_home("RAILS_ENV=#{rails_env} bundle exec ruby script/start.rb start")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} bundle exec ruby script/start.rb start &")
     end
 
     def code_directory
