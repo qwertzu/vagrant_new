@@ -14,7 +14,6 @@ class Targeting < VagrantTest::Service
 
       #sudo('/etc/init.d/apache2 start')
 
-      sudo('lsof -i :80 > /home/vagrant/port-used')
       exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p4567 --user=vagrant &")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_targeting.rb -p 80 &")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/targeting_publisher_consumer_daemon start &")

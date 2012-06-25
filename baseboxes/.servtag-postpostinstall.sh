@@ -59,7 +59,7 @@ su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-echo "v Montag.Morgen" > version
+echo "v Montag.Mittag" > version
 
 # cleaning up
 rm *.tar.gz
