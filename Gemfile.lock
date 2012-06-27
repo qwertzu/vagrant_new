@@ -34,6 +34,5 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   awesome_print
-  net-ssh
   settingslogic
   vagrant
