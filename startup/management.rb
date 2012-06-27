@@ -24,27 +24,8 @@ class Management < VagrantTest::Service
       sudo('/etc/init.d/redis-server start')
       sudo("service apache2 stop")
 
-     # exec_home_non_blocking('nohup rvmsudo passenger start -p80 -d --user vagrant -e vagrant')
-      #exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
-      #exec_home(" `echo 'rvmsudo passenger start -p80 -d --user vagrant -e vagrant' ` ")
-      #exec_home("./start-vagrant2.rb &")
-
       # starting server
       exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &> /dev/null")
-
-     # spawn({"RAILS_ENV" => "vagrant"}, exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant"))
-
-      #Net::SSH.start(self.ip, "vagrant", :password => "vagrant1") do |ssh|
-      #  output = ssh.exec!("cd /vagrant/targeting/ && rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
-      #  ssh.exec!("echo 'test' > log2")
-      #end
-
-      #puts "`cd /vagrant/targeting/ && rvmsudo passenger start -p80 -d --user vagrant -e vagrant`"
-
-      #exec_home("sleep 120s")
-
-      #exec_home_non_blocking2("rvmsudo passenger start -p80 -d --user vagrant -e vagrant"))
-     # exec_home('RAILS_ENV=vagrant passenger start -p4363 -d') if fork().nil?
     end
 
     def code_directory

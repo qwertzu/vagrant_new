@@ -18,18 +18,6 @@ class Targeting < VagrantTest::Service
       sudo('/etc/init.d/redis-server start')
       sudo('service apache2 stop')
 
-      #exec_home('redis-server &')
-      #exec_home_ssh("rvmsudo passenger start -p80 -d --user=vagrant -e vagrant")
-      #exec_home("passenger start -p8165 &")
-      #exec_home_non_blocking2("rvmsudo passenger start -p81 --user vagrant -e vagrant")
-      #exec_home(" `echo 'rvmsudo passenger start -p80 --user vagrant -e vagrant &' ` ")
-      #exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_targeting.rb -p3000 &")
-      #%Q(ssh "vagrant"@"#{self.ip}"  "rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
-      #exec_hone("rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
-      #Net::SSH.start(self.ip, "vagrant", :password => "vagrant1") do |ssh|
-      #  output = ssh.exec!("cd /vagrant/targeting/ && rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
-      #end
-
       # starting the server / service
       exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &> /dev/null")
       exec_home("RAILS_ENV=#{rails_env} rvmsudo ruby dealomio_targeting.rb -p 3001 &")
