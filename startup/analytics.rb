@@ -14,6 +14,7 @@ class Analytics < VagrantTest::Service
       sudo('service cashandra start')
       exec_home("RAILS_ENV=#{rails_env} ruby script/analytics_consumer_deamon start")
       exec_home("RAILS_ENV=#{rails_env} ruby script/import_consumer_deamon start")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p80 -d --user vagrant -e vagrant &")
     end
 
     def code_directory
@@ -31,5 +32,3 @@ class Analytics < VagrantTest::Service
   end
 
 end
-
-

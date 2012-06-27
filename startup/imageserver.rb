@@ -9,10 +9,11 @@ class Imageserver < VagrantTest::Service
       exec_home('bundle install')
       exec_home('cp -v config/application.yml.example config/application.yml')
       sudo('/etc/init.d/redis-server start')
-      exec_home("RAILS_ENV=#{rails_env} ruby script/deal_consumer_daemon start")
-      exec_home("RAILS_ENV=#{rails_env} ruby script/detail_picture_consumer_daemon start")
-      exec_home("RAILS_ENV=#{rails_env} ruby script/picture_consumer_daemon start")
-      sudo('/etc/init.d/apache2 start')
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/deal_consumer_daemon run &")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/detail_picture_consumer_daemon run &")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/picture_consumer_daemon run &")
+      #sudo('/etc/init.d/apache2 start')
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p80 -d --user vagrant -e vagrant &")
     end
 
     def code_directory

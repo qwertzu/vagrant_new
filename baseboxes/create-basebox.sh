@@ -16,7 +16,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test1'
+baseboxname='dealomio-test3'
 
 system_password="vagrant1" #TODO ändern für "vagrant"
 mysql_password="root" #TODO ändern für "vagrant"
@@ -139,6 +139,10 @@ vagrant basebox build $baseboxname
 vagrant basebox export $baseboxname
 vagrant box add $baseboxname ./$baseboxname.box
 vagrant reload
+rm ./Vagrantfile
+vagrant init $baseboxname
+vagrant up
+
 }
 
 #######################################################

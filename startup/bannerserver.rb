@@ -14,7 +14,8 @@ class Bannerserver < VagrantTest::Service
       exec_home("RAILS_ENV=#{rails_env} thin start -d -p 5000 &")
       exec_home("RAILS_ENV=#{rails_env} thin start -d -p 5001 &")
       exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon start")
-      sudo('/etc/init.d/apache2 start')
+      sudo('service apache2 stop')
+      exec_home_non_blocking("rvmsudo passenger start -p80 -d --user vagrant -e vagrant")
     end
 
     def code_directory

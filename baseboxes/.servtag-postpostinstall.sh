@@ -20,7 +20,17 @@ apt-get install -y libxml2 libxml2-dev
 apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
 apt-get install -y redis-server #redis-server
 apt-get install -y couchdb python-couchdb
-apt-get install -y rabbitmq-server
+
+## Installing a modern version of rabbitmq-server
+# Siehe auch: http://www.rabbitmq.com/install-debian.html
+echo "" >> /etc/apt/sources.list
+echo "# rabbitmq new" >> /etc/apt/sources.list
+echo "deb http://www.rabbitmq.com/debian/ testing main" >> /etc/apt/sources.list
+wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+apt-key add rabbitmq-signing-key-public.asc
+apt-get -y update
+apt-get install -y rabbitmq-server rabbitmq-plugins-common
+rabbitmq-plugins enable rabbitmq_management
 
 ## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
@@ -59,10 +69,11 @@ su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-echo "v Montag.Mittag" > version
+echo "v Montag.Nachmittag" > version
 
 # stopping services
-services apache2 stop
+service apache2 stop
+service rabbitmq-server stop
 
 # cleaning up
 rm *.tar.gz

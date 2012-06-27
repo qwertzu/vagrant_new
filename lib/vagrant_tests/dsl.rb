@@ -28,8 +28,23 @@ module VagrantTest
 
       # TODO  - sich versichern, dass die ouput auf dem Console geschrieben wird
       def exec_home_non_blocking cmd
-        vm.exec(cmd +" & ", "/vagrant/" + self.name)
+        vm.exec(cmd, "/vagrant/" + self.name)
       end
+
+      ## TODO  - sich versichern, dass die ouput auf dem Console geschrieben wird
+      #def exec_home_non_blocking2 cmd
+      #  vm.exec_non_blocking(cmd, "/vagrant/" + self.name)
+      #end
+
+      #TODO
+      def exec_home_ssh cmd
+        Net::SSH.start('localhost', 'vagrant', :password => 'vagrant1') do |ssh|
+          output = ssh.exec!("cd /vagrant/"+self.name+" && " + cmd)
+          # output = ssh.exec!("ps -ef | grep [^_]#{process_name} | grep -v grep")
+        end
+      end
+
+
 
       def code_directory
         "~/#{self.name}"
@@ -40,7 +55,7 @@ module VagrantTest
       end
 
       def stop
-
+        #TODO implement me
       end
 
     end

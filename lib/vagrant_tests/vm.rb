@@ -71,6 +71,23 @@ module VagrantTest
       message
     end
 
+    #def exec_non_blocking(cmd, dir = '/')
+    #  neo_channel = Communication::SSH.new(self)
+    #
+    #  puts "#{vm.name}: Execute #{cmd}"
+    #  message = ""
+    #  begin
+    #    vm.neo_channel.execute("cd #{dir} && " + cmd) do |output,data|
+    #      print "#{data}"
+    #      message = data
+    #    end
+    #  rescue
+    #    puts 'Caught an EXCEPTION'
+    #    message = nil
+    #  end
+    #  message
+    #end
+
     def sudo(cmd)
       puts "#{vm.name}: Sudo #{cmd}"
       message = ""
@@ -126,7 +143,7 @@ module VagrantTest
           passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
           puts passenger_version
           raise() if !passenger_version
-          service.exec_home('passenger-install-apache2-module --auto')
+          #service.exec_home('passenger-install-apache2-module --auto')
           #sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version}/ext/apache2/mod_passenger.so /etc/apache2/symlink_passenger/passenger_modules")
           #sudo("ln -f -s /usr/local/rvm/gems/#{ruby_version}/gems/passenger-#{passenger_version} /etc/apache2/symlink_passenger/passenger_root")
           #sudo("ln -f -s /usr/local/rvm/wrappers/#{ruby_version}/ruby /etc/apache2/symlink_passenger/passenger_ruby")

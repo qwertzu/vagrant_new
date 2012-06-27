@@ -111,10 +111,3 @@ module VagrantTest
   end
 
 end
-
-
-
-
-
-
-
