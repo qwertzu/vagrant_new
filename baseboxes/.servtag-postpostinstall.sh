@@ -38,10 +38,9 @@ echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.pres
 echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
-apt-get -y install mysql-server
+apt-get install -y mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
-apt-get install cassandra # starten: sudo services cassandra start
-
+apt-get install -y cassandra --force-yes # starten: sudo services cassandra start
 
 ## Installing RVM
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
@@ -60,7 +59,7 @@ sudo adduser vagrant rvm
 sudo adduser root rvm
 
 ## Installing dependencies for vagrant_tests
-apt-get install -y libqt4-dev libqtwebkit-dev # needed fom gem capybara-webkit
+apt-get install -y libqt4-dev libqtwebkit-dev xvfb daemon # needed fom gem capybara-webkit
 apt-get install -y libmysql-ruby # needed from gem mysql2
 apt-get install -y libmagick9-dev # needed from gem rmagick
 
@@ -69,11 +68,11 @@ su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-echo "v Montag.Nachmittag" > version
+cd /home/vagrant/ && echo "v 28/06/2012.Feierabend" > version
 
 # stopping services
-service apache2 stop
-service rabbitmq-server stop
+sudo service apache2 stop
+sudo service rabbitmq-server stop
 
 # cleaning up
 rm *.tar.gz
