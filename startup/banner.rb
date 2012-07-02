@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../lib/vagrant_tests')
 
-class Dealkeeper < VagrantTest::Service
+class Banner < VagrantTest::Service
 
   class << self
 
@@ -10,18 +10,21 @@ class Dealkeeper < VagrantTest::Service
       exec_home('bundle install')
 
       # copying configuration files
-      exec_home('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
+      exec_home('cp -v config/application.yml.example config/application.yml')
 
-      # starting the service
-      exec_home("RAILS_ENV=#{rails_env} bundle exec ruby script/start.rb start")
+      # starting server
+      #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup server --user vagrant -e vagrant")
+      exec_home('rvmsudo middleman -p 80 -e vagrant')
+      # rake server RACK_ENV=integration
+
     end
 
     def code_directory
-      Settings.dealkeeper_path
+      Settings.banner_path
     end
 
     def ports
-      [6767]
+      [80]
     end
 
     def stop

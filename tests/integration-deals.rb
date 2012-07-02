@@ -19,12 +19,6 @@ vagrant_test do |env|
   ima = env.add_vm(:imageserver)
   ima.add Imageserver
 
-  ana = env.add_vm(:analytics)
-  ana.add Analytics
-
-  rep = env.add_vm(:reporting)
-  rep.add Reporting
-
   int = env.add_vm(:integration)
   int.add Integration
 

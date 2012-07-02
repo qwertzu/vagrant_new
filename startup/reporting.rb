@@ -14,16 +14,24 @@ class Reporting < VagrantTest::Service
       exec_home('cp -v config/application.yml.example config/application.yml')
       exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
 
+
+      # TODO - http://opikanoba.org/linux/couchdb-centos6
+      # TODO verschieben nach script
+      #sudo('sed -i -e "s/;port = 5984/port = 5984/g" /etc/couchdb/local.ini')
+      #sudo('sed -i -e "s/;bind_address = 127.0.0.1/bind_address = 0.0.0.0/g" /etc/couchdb/local.ini')
+
       # starting/stoping server services
-      sudo('/etc/init.d/couchdb start')
-      sudo('/etc/init.d/apache2 stop')
       sudo('service apache2 stop')
+      sudo('/etc/init.d/couchdb start')
 
       exec_home_non_blocking("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb start -p 3001")
 
       # starting the daemons
-      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/logging.rb start")
-      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/report.rb start")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/logging.rb start")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/report.rb start")
+
+      sudo('service couchdb restart')
     end
 
     def code_directory
@@ -31,7 +39,7 @@ class Reporting < VagrantTest::Service
     end
 
     def ports
-      [80]
+      [80, 5984]
     end
 
     def stop

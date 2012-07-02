@@ -6,7 +6,6 @@ class Imageserver < VagrantTest::Service
 
     def run
       # solving a bug with capybara
-      sudo('apt-get install -y xvfb daemon') # TODO remove
       exec_home("daemon -X 'Xvfb :1 -screen 0 1024x768x16 -nolisten inet6' --name=xserver-simator-daemon --inherit -env=RAILS_ENV=vagrant ")
 
       # installing dependencies

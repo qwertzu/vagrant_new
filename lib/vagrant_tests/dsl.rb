@@ -4,7 +4,7 @@ module VagrantTest
 
     class << self
 
-      attr_accessor :ip, :path, :port_forwards, :vm, :rails_env
+      attr_accessor :ip, :path, :flags_for_path, :port_forwards, :vm, :rails_env
 
       def name
         self.to_s.underscore
@@ -84,6 +84,13 @@ module VagrantTest
       end
 
       #Process.waitall
+
+     #self.path.each{ |subpath|
+     #  #wenn nicht nil, :option_fÜur_path_executieren
+     #  if
+     #  fi
+     #  environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{environment.ci_rep} bundle exec rspec #{subpath}") unless environment.test_service == nil
+     #}
 
       environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{environment.ci_rep} bundle exec rspec #{environment.spec_path}") unless environment.test_service == nil
 

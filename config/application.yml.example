@@ -12,3 +12,8 @@ vagrant:
   imageserver_path: './../dealomio_imageserver'
   reporting_path: './../dealomio_reporting_api'
   analytics_path: './../dealomio_analytics_api'
+  feedback_path: './../dealomio_feedback_api'
+  banner_path: './../dealomio_banner'
+  frontend_path: './../dealomio_frontend'
+  mysql_username: root
+  mysql_password: root

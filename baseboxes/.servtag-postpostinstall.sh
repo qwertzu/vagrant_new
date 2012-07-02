@@ -19,7 +19,11 @@ apt-get install -y libreadline-dev
 apt-get install -y libxml2 libxml2-dev
 apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
 apt-get install -y redis-server #redis-server
+
+# Installing couchdb
 apt-get install -y couchdb python-couchdb
+sed -i -e "s/;port = 5984/port = 5984/g" /etc/couchdb/local.ini
+sed -i -e "s/;bind_address = 127.0.0.1/bind_address = 0.0.0.0/g" /etc/couchdb/local.ini
 
 ## Installing a modern version of rabbitmq-server
 # Siehe auch: http://www.rabbitmq.com/install-debian.html
@@ -40,7 +44,11 @@ echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get install -y mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
+
+# Installing cassandra
 apt-get install -y cassandra --force-yes # starten: sudo services cassandra start
+chown -R vagrant /var/log/cassandra
+chown -R vagrant /var/lib/cassandra
 
 ## Installing RVM
 # siehe auch: http://stackoverflow.com/questions/10752631/how-to-install-rvm-on-vagrant-ubuntu-12-04-lts-using-puppet
@@ -59,7 +67,7 @@ sudo adduser vagrant rvm
 sudo adduser root rvm
 
 ## Installing dependencies for vagrant_tests
-apt-get install -y libqt4-dev libqtwebkit-dev xvfb daemon # needed fom gem capybara-webkit
+apt-get install -y libqt4-dev libqtwebkit-dev xvfb daemon --force-yes # needed fom gem capybara-webkit
 apt-get install -y libmysql-ruby # needed from gem mysql2
 apt-get install -y libmagick9-dev # needed from gem rmagick
 
