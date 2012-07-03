@@ -76,7 +76,7 @@ su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-cd /home/vagrant/ && echo "v 28/06/2012.Feierabend" > version
+cd /home/vagrant/ && echo "v 5 -n " > version
 
 # stopping services
 sudo service apache2 stop

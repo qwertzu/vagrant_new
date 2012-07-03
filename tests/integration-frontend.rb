@@ -9,10 +9,6 @@ vagrant_test do |env|
   man = env.add_vm(:management)
   man.add Management
 
-  tar = env.add_vm(:targeting)
-  tar.add Targeting
-  tar.add Dealkeeper
-
   ban = env.add_vm(:bannerserver)
   ban.add Bannerserver
 
@@ -34,8 +30,9 @@ vagrant_test do |env|
   frontend = env.add_vm(:frontend)
   frontend.add Frontend
 
-  rep = env.add_vm(:reporting)
-  rep.add Reporting      # TODO to remove
+  tar = env.add_vm(:targeting)
+  tar.add Targeting
+  tar.add Dealkeeper
 
   env.test_service = Integration
   env.rails_env = "vagrant"

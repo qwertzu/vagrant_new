@@ -16,7 +16,8 @@ class Banner < VagrantTest::Service
 
       # starting server
       #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup server --user vagrant -e vagrant")
-      exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant"')
+      #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant"')
+      exec_home('rake server RACK_ENV=vagrant &')
       # rake server RACK_ENV=integration
 
     end

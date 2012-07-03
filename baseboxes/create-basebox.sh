@@ -16,7 +16,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='test-divers4b'
+baseboxname='test-divers5'
 
 system_password="vagrant1"
 mysql_password="root"
@@ -137,7 +137,7 @@ sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantrub
 # Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
 # -n becazse we build in ssh on t5. TODO verifiy if it works.
 # cf: https://github.com/jedi4ever/veewee/issues/116
-vagrant basebox build $baseboxname 
+vagrant basebox build $baseboxname -n
 
 # Exporting the box to vagrant
 vagrant basebox export $baseboxname

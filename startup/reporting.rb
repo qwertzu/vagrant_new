@@ -23,7 +23,8 @@ class Reporting < VagrantTest::Service
 
       # starting/stoping server services
       sudo('service apache2 stop')
-     # sudo('/etc/init.d/couchdb start')
+      sudo("ps -edf | grep couch | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")   # kill the process that is busying the port :5984 / was at the end
+      sudo('service couchdb start') # was at the end 2
 
       exec_home_non_blocking("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb start -p 3001 &")
@@ -31,14 +32,6 @@ class Reporting < VagrantTest::Service
       # starting the daemons
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/logging.rb start")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/report.rb start")
-
-      # kill the process that is busying the port :5984
-      sudo('sleep 1s')
-      sudo("ps -edf | grep couch | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")   # TODO changed for exec_home ""
-      #exec_home_non_blocking('sudo couchdb -i -e /etc/couchdb/local.ini &')
-      # kill beam
-      sudo('sleep 1s')
-      sudo('service couchdb start')
     end
 
     def code_directory
