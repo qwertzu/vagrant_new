@@ -16,8 +16,8 @@ vagrant_test do |env|
   ban = env.add_vm(:bannerserver)
   ban.add Bannerserver
 
-  #ima = env.add_vm(:imageserver)
-  #ima.add Imageserver
+  ima = env.add_vm(:imageserver)
+  ima.add Imageserver
 
   ana = env.add_vm(:analytics)
   ana.add Analytics
@@ -34,9 +34,12 @@ vagrant_test do |env|
   frontend = env.add_vm(:frontend)
   frontend.add Frontend
 
-  # views?
+  rep = env.add_vm(:reporting)
+  rep.add Reporting      # TODO to remove
 
   env.test_service = Integration
   env.rails_env = "vagrant"
   env.spec_path= 'spec/frontend'
+
+  # RAILS_ENV=vagrant xvfb-run bundle exec rspec spec/frontend/views_spec.rb:45     TODO start frontend tests
 end

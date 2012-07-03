@@ -12,9 +12,11 @@ class Banner < VagrantTest::Service
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
+      sudo('service apache2 stop')
+
       # starting server
       #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup server --user vagrant -e vagrant")
-      exec_home('rvmsudo middleman -p 80 -e vagrant')
+      exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant"')
       # rake server RACK_ENV=integration
 
     end
@@ -24,7 +26,7 @@ class Banner < VagrantTest::Service
     end
 
     def ports
-      [80]
+      [80, 3030]
     end
 
     def stop

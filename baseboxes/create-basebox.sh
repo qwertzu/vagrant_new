@@ -16,9 +16,9 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test10'
+baseboxname='test-divers4b'
 
-system_password="vagrant"
+system_password="vagrant1"
 mysql_password="root"
 
 
@@ -114,6 +114,8 @@ sed -i -e "s/root_password password vagrant/root_password password $mysql_passwo
 sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
+#sed -i -e 's/:ssh_guest_port => "22",/:ssh_guest_port => "23",/g' definitions/$baseboxname/definition.rb # because are connected on t5 with ssh port 22
+
 #changing the way ruby is installed (deleted in postinstall, properly afterwards in servtag-postinstall.sh)
 sed -i -e "s/wget http:\/\/ftp.ruby-lang.org\/pub\/ruby\/1.9\/ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
 sed -i -e "s/tar xvzf ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
@@ -133,7 +135,9 @@ sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definiti
 sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 
 # Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
-vagrant basebox build $baseboxname
+# -n becazse we build in ssh on t5. TODO verifiy if it works.
+# cf: https://github.com/jedi4ever/veewee/issues/116
+vagrant basebox build $baseboxname 
 
 # Exporting the box to vagrant
 vagrant basebox export $baseboxname

@@ -18,7 +18,7 @@ class Frontend < VagrantTest::Service
 
       # starting server
       #exec_home_non_blocking("RACK_ENV=#{rails_env} rack server") # TODO ACHTUNG port?
-      exec_home('rvmsudo middleman -p 80 -e vagrant')
+      exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant" ')          # TODO start rake server instead!
       #RACK_ENV=integration rake server
     end
 
@@ -27,7 +27,7 @@ class Frontend < VagrantTest::Service
     end
 
     def ports
-      [80]
+      [80, 4567]
     end
 
     def stop
