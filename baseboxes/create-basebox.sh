@@ -16,7 +16,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='test-divers5'
+baseboxname='test-divers6'
 
 system_password="vagrant1"
 mysql_password="root"
@@ -112,7 +112,7 @@ sed -i -e "s/user-password password vagrant/user-password password $system_passw
 sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
 sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
 sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
-sed -i -e "s/:ssh_password => \"vagrant\"/ :ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
+sed -i -e "s/:ssh_password => \"vagrant\"/:ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
 
 #sed -i -e 's/:ssh_guest_port => "22",/:ssh_guest_port => "23",/g' definitions/$baseboxname/definition.rb # because are connected on t5 with ssh port 22
 
@@ -137,7 +137,7 @@ sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantrub
 # Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
 # -n becazse we build in ssh on t5. TODO verifiy if it works.
 # cf: https://github.com/jedi4ever/veewee/issues/116
-vagrant basebox build $baseboxname -n
+xvfb-run vagrant basebox build $baseboxname -n
 
 # Exporting the box to vagrant
 vagrant basebox export $baseboxname

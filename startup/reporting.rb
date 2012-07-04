@@ -8,7 +8,7 @@ class Reporting < VagrantTest::Service
       # installing dependencies
       exec_home("gem install bundler")
       exec_home("bundle install")
-      sudo('apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes')
+      sudo('apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes')    # TODO verschieben nach script
 
       # copying configuration files
       exec_home('cp -v config/couchdb.yml.example config/couchdb.yml')

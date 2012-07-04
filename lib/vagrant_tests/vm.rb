@@ -114,18 +114,20 @@ module VagrantTest
       end
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
-      self.services.each do |service|
-        service.exec_home("bundle")
 
-        begin
-          ruby_version = service.exec_home('rvm current').chomp
-          passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
-          puts passenger_version
-          raise() if !passenger_version
-          puts("#{service.name} runs with local gemset passenger")
-        rescue
-          puts("#{service.name} runs with global passenger")
-        end
+      self.services.each do |service|
+        service.exec_home("gem install bundle")
+        service.exec_home("bundle")
+        service.exec_home("gem install passenger")
+        #begin
+        #  ruby_version = service.exec_home('rvm current').chomp
+        #  passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
+        #  puts passenger_version
+        #  raise() if !passenger_version
+        #  puts("#{service.name} runs with local gemset passenger")
+        #rescue
+        #  puts("#{service.name} runs with global passenger")
+        #end
       end
       puts "enabled apache files"
     end
