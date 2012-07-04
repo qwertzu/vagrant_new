@@ -106,6 +106,7 @@ module VagrantTest
     end
 
     def up
+
       destroy if vm.state == :running
       unless vm.state == :running
         puts "About to run #{vm.name}:-up..."
@@ -115,8 +116,9 @@ module VagrantTest
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
 
+
       self.services.each do |service|
-        service.exec_home("gem install bundle")
+        service.exec_home("gem install bundler")
         service.exec_home("bundle")
         service.exec_home("gem install passenger")
         #begin
