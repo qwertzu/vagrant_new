@@ -106,6 +106,7 @@ module VagrantTest
     end
 
     def up
+
       destroy if vm.state == :running
       unless vm.state == :running
         puts "About to run #{vm.name}:-up..."
@@ -114,11 +115,12 @@ module VagrantTest
       end
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
-      sudo("cd /etc/apache2/sites-enabled && a2dissite *")
-      sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
+      services[0].exec_home ("pwd && ls --color")
+      #sudo("cd /etc/apache2/sites-enabled && a2dissite *")
+      #sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
       self.services.each do |service|
-        sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
-        sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
+        #sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
+        #sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
         service.exec_home("gem install bundler")
         service.exec_home("bundle")
 

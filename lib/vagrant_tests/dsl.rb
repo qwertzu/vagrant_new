@@ -45,7 +45,7 @@ module VagrantTest
 
   class EnvironmentConfiguration
 
-    attr_accessor :vms, :spec_path, :test_service, :rails_env , :ci_rep
+    attr_accessor :vms, :spec_path, :test_service, :rails_env , :ci_rep , :format
 
     def add_vm name, base_box = Settings.base_box
       (@vms ||= []) << (vm = VM.new(name, base_box))
@@ -58,9 +58,12 @@ module VagrantTest
     end
 
     def ci_rep
-      @ci_rep = ""
-      @ci_rep = "CI_REPORTS=#{ENV['CI_REPORTS']}"  if ENV['CI_REPORTS']
+      @ci_rep = " " unless @ci_rep
       @ci_rep
+    end
+    def format
+      @format = " " unless @format
+      @format
     end
 
   end
@@ -80,9 +83,9 @@ module VagrantTest
       end
 
       #Process.waitall
-
-      environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{environment.ci_rep} bundle exec rspec #{environment.spec_path}") unless environment.test_service == nil
-
+      environment.spec_path.each do |spec|
+        environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "} bundle exec rspec #{spec} --color #{'--format '<< environment.format unless environment.format.eql? " "}") unless environment.test_service == nil
+      end
       #environment.vms.each { |vm| vm.destroy }
       #EnvironmentGenerator.delete_ips
     end
