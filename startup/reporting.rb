@@ -8,18 +8,12 @@ class Reporting < VagrantTest::Service
       # installing dependencies
       exec_home("gem install bundler")
       exec_home("bundle install")
-      sudo('apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes')    # TODO verschieben nach script
+      sudo('apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes')    # TODO verschoben nach script 5/07/2012 nach script
 
       # copying configuration files
       exec_home('cp -v config/couchdb.yml.example config/couchdb.yml')
       exec_home('cp -v config/application.yml.example config/application.yml')
       exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
-
-
-      # TODO - http://opikanoba.org/linux/couchdb-centos6
-      # TODO verschieben nach script
-      sudo('sed -i -e "s/;port = 5984/port = 5984/g" /etc/couchdb/local.ini')
-      sudo('sed -i -e "s/;bind_address = 127.0.0.1/bind_address = 0.0.0.0/g" /etc/couchdb/local.ini')
 
       # starting/stoping server services
       sudo('service apache2 stop')

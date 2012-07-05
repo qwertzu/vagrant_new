@@ -13,7 +13,7 @@ class Dealkeeper < VagrantTest::Service
       exec_home('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
 
       # starting the service
-      exec_home("RAILS_ENV=#{rails_env} bundle exec ruby script/start.rb start")
+      exec_home("RAILS_ENV=#{rails_env} bundle exec ruby script/start.rb run &")
     end
 
     def code_directory

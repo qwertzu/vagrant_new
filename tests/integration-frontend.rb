@@ -34,9 +34,12 @@ vagrant_test do |env|
   tar.add Targeting
   tar.add Dealkeeper
 
+  rep = env.add_vm(:reporting) # TODO to remove
+  rep.add Reporting
+
   env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= 'spec/frontend'
+  env.spec_path= ['spec/frontend']
 
   # RAILS_ENV=vagrant xvfb-run bundle exec rspec spec/frontend/views_spec.rb:45     TODO start frontend tests
 end

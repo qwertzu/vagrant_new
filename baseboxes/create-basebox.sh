@@ -5,11 +5,6 @@
 # Script for configuration and installation of the basebox-we-need with veewee.
 # * creation of the basebox
 # * creation of a servtag-postinstall.sh script that will be copied to definitions/your-basebox/servtag-postinstall.sh and that should be run by veewee
-<<<<<<< .merge_file_RbQ4DU
-#
-=======
-# 
->>>>>>> .merge_file_CAA8kW
 #
 # src: http://www.dejonghenico.be/unix/create-vagrant-base-boxes-veewee
 
@@ -20,18 +15,10 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-<<<<<<< .merge_file_RbQ4DU
-baseboxname='test-divers6'
+baseboxname='test-divers6f'
 
-system_password="vagrant1"
+system_password="vagrant"
 mysql_password="root"
-=======
-baseboxname='servtag-test42'
-
-system_password="vagrant1" #TODO ändern für "vagrant"
-mysql_password="vagrant1" #TODO ändern für "vagrant"
->>>>>>> .merge_file_CAA8kW
-
 
 #######################################################
 # Helpers
@@ -40,29 +27,14 @@ mysql_password="vagrant1" #TODO ändern für "vagrant"
 #
 # clean the variable between 2 call
 function clean_informations () {
-<<<<<<< .merge_file_RbQ4DU
-last_return_status=1
-status="failed"
-last_message_status="void"
-=======
 	last_return_status=1
 	status="failed"
 	last_message_status="void"
->>>>>>> .merge_file_CAA8kW
 }
 
 #
 # Format the ouput to inform the user of his configuration
 function helper_writeinformation () {
-<<<<<<< .merge_file_RbQ4DU
-if [ $last_return_status == 0 ]; then
-status="OK"
-else
-status="failed"
-fi
-echo $last_message_status."..............................[".$status."]"
-clean_informations
-=======
 	if [ $last_return_status == 0 ]; then
 		status="OK"
 	else
@@ -70,50 +42,10 @@ clean_informations
 	fi
 	echo $last_message_status."..............................[".$status."]"
 	clean_informations
->>>>>>> .merge_file_CAA8kW
 }
 
 #######################################################
 # Verification of the system
-<<<<<<< .merge_file_RbQ4DU
-# ./configure -like
-#######################################################
-function configuration_checker() {
-
-# check 2: do we have ./baseboxes created?
-# ls... easy
-
-# check 3: do we have every software we need?
-tmp=""
-tmp=`which vagrant`
-tmp2=""
-tmp2=`which veewee`
-last_message_status="vagrant and veewee are installed? ................................"
-if [ $tmp != "" -a $tmp2 != "" ]; then
-last_return_status=0
-else
-last_return_status=1
-fi
-helper_writeinformation
-
-# check4: would it be possible to check if the bios is correctly configured?
-# check5: do we have a iso directory
-# check6: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
-last_message_status="basebox_name equality in this script and application.yml ........."
-var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
-if [ $var != $baseboxname ]; then
-last_return_status=0
-else
-last_return_status=1
-fi
-helper_writeinformation
-
-# check 1: are we in the good directory?
-# use pwd? ls?
-last_return_status=1
-last_message_status="CONFIGURATION ........................... pending(not implemented)"
-helper_writeinformation
-=======
 #	./configure -like
 #######################################################
 function configuration_checker() {
@@ -151,7 +83,6 @@ function configuration_checker() {
 	last_return_status=1
 	last_message_status="CONFIGURATION ........................... pending(not implemented)"
 	helper_writeinformation
->>>>>>> .merge_file_CAA8kW
 }
 
 #######################################################
@@ -160,62 +91,6 @@ function configuration_checker() {
 # * Create a basebox
 # * Inject the ./.servtag-postpostinstall.sh script at the end of ./definition/$baseboxname/postinstallation.sh
 #######################################################
-<<<<<<< .merge_file_RbQ4DU
-function basebox_creation_runner() {
-# Creating the configuration files of the box
-vagrant basebox define $baseboxname $vagrant_template
-
-# Adapting the layout
-sed -i -e 's/en_US/de_DE/g' definitions/$baseboxname/preseed.cfg
-sed -i -e 's/method=us/method=de/g' definitions/$baseboxname/definition.rb
-sed -i -e 's/layout=USA/layout=de/g' definitions/$baseboxname/definition.rb
-sed -i -e 's/variant=USA/variant=DE/g' definitions/$baseboxname/definition.rb
-
-# Moving our postinstall file and saying vagrant it has to be launched
-cp .servtag-postpostinstall.sh definitions/$baseboxname/servtag-postinstall.sh
-sed -i -e 's/"],/", "servtag-postinstall.sh"], /g' definitions/$baseboxname/definition.rb
-
-# Changing the passwords
-sed -i -e "s/user-password password vagrant/user-password password $system_password/g" definitions/$baseboxname/preseed.cfg
-sed -i -e "s/user-password-again password vagrant/user-password-again password $system_password/g" definitions/$baseboxname/preseed.cfg
-sed -i -e "s/root_password password vagrant/root_password password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
-sed -i -e "s/root_password_again password vagrant/root_password_again password $mysql_password/g" definitions/$baseboxname/servtag-postinstall.sh
-sed -i -e "s/:ssh_password => \"vagrant\"/:ssh_password => \"$system_password\"/g" definitions/$baseboxname/definition.rb
-
-#sed -i -e 's/:ssh_guest_port => "22",/:ssh_guest_port => "23",/g' definitions/$baseboxname/definition.rb # because are connected on t5 with ssh port 22
-
-#changing the way ruby is installed (deleted in postinstall, properly afterwards in servtag-postinstall.sh)
-sed -i -e "s/wget http:\/\/ftp.ruby-lang.org\/pub\/ruby\/1.9\/ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/tar xvzf ruby-1.9.2-p290.tar.gz//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/cd ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/.\/configure --prefix=\/opt\/ruby//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/make install//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/^make//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/rm -rf ruby-1.9.2-p290//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/wget http:\/\/production.cf.rubygems.org\/rubygems\/rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/tar xzf rubygems-1.8.11.tgz//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/cd rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/\/opt\/ruby\/bin\/ruby setup.rb//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/^cd \.\.$//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/rm -rf rubygems-1.8.11//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/\/opt\/ruby\/bin\/gem install chef --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
-sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
-
-# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
-# -n becazse we build in ssh on t5. TODO verifiy if it works.
-# cf: https://github.com/jedi4ever/veewee/issues/116
-xvfb-run vagrant basebox build $baseboxname -n
-
-# Exporting the box to vagrant
-vagrant basebox export $baseboxname
-vagrant box add $baseboxname ./$baseboxname.box
-vagrant reload
-rm ./Vagrantfile
-vagrant init $baseboxname
-vagrant up
-
-=======
 function  basebox_creation_runner() {
 	# Creating the configuration files of the box
 	vagrant basebox define $baseboxname $vagrant_template
@@ -256,13 +131,13 @@ function  basebox_creation_runner() {
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
 	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
-	vagrant basebox build $baseboxname
+	# -n because on t5 we do have No GUI
+	vagrant basebox build $baseboxname -n
 
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
 	vagrant reload
->>>>>>> .merge_file_CAA8kW
 }
 
 #######################################################
@@ -273,11 +148,7 @@ function  basebox_creation_runner() {
 echo ""
 echo "CONFIGURATION"
 echo "============="
-<<<<<<< .merge_file_RbQ4DU
-#configuration_checker
-=======
 configuration_checker
->>>>>>> .merge_file_CAA8kW
 
 echo ""
 echo ""

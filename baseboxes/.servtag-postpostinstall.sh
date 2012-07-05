@@ -15,15 +15,14 @@ echo "deb-src http://www.apache.org/dist/cassandra/debian 08x main" >> /etc/apt/
 # Installing new SOFTWARES and necessary servers
 apt-get -y update
 apt-get -y upgrade
-<<<<<<< .merge_file_ky5ekS
 apt-get install -y libreadline-dev
 apt-get install -y libxml2 libxml2-dev
 apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
 apt-get install -y redis-server #redis-server
 
 # Installing couchdb
-apt-get install -y couchdb python-couchdb
-sed -i -e "s/;port = 5984/port = 5984/g" /etc/couchdb/local.ini
+apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes
+sed -i -e "s/;port = 5984/port = 5984/g" /etc/couchdb/local.ini # explanations: http://opikanoba.org/linux/couchdb-centos6
 sed -i -e "s/;bind_address = 127.0.0.1/bind_address = 0.0.0.0/g" /etc/couchdb/local.ini
 
 ## Installing a modern version of rabbitmq-server
@@ -36,14 +35,6 @@ apt-key add rabbitmq-signing-key-public.asc
 apt-get -y update
 apt-get install -y rabbitmq-server rabbitmq-plugins-common
 rabbitmq-plugins enable rabbitmq_management
-=======
-apt-get install -y libreadline-dev 
-apt-get install -y libxml2 libxml2-dev
-apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
-apt-get install -y redis #redis-server
-apt-get install -y couchdb python-couchdb
-apt-get install -y rabbitmq-server
->>>>>>> .merge_file_Mc20CT
 
 ## Installing MYSQL - using preseed for automatization
 apt-get install -y debconf-utils
@@ -51,17 +42,13 @@ echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.pres
 echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
-<<<<<<< .merge_file_ky5ekS
 apt-get install -y mysql-server
-=======
-apt-get -y install mysql-server
->>>>>>> .merge_file_Mc20CT
 apt-get install -y mysql-client mysql-common mysql-server
-apt-get install cassandra	# starten: sudo services cassandra start
+apt-get install cassandra # starten: sudo services cassandra start
 
 # Installing cassandra
 apt-get install -y cassandra --force-yes # starten: sudo services cassandra start
-chown -R vagrant /var/log/cassandra
+chown -R vagrant /var/log/cassandra # cf: http://dustyreagan.com/installing-cassandraD-on-ubuntu-linux/
 chown -R vagrant /var/lib/cassandra
 
 ## Installing RVM
@@ -81,22 +68,16 @@ sudo adduser vagrant rvm
 sudo adduser root rvm
 
 ## Installing dependencies for vagrant_tests
-<<<<<<< .merge_file_ky5ekS
 apt-get install -y libqt4-dev libqtwebkit-dev xvfb daemon --force-yes # needed fom gem capybara-webkit
 apt-get install -y libmysql-ruby # needed from gem mysql2
 apt-get install -y libmagick9-dev # needed from gem rmagick
-=======
-apt-get install -y libqt4-dev libqtwebkit-dev # needed fom gem capybara-webkit
-apt-get install -y libmysql-ruby	      # needed from gem mysql2
-apt-get install -y libmagick9-dev	      # needed from gem rmagick
->>>>>>> .merge_file_Mc20CT
 
 #node.js
 su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-cd /home/vagrant/ && echo "v 6 xvfb " > version
+cd /home/vagrant/ && echo "v -n avec modification de */lib/***/driverstvm " > version
 
 # stopping services
 sudo service apache2 stop
