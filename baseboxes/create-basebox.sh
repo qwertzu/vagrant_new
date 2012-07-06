@@ -15,7 +15,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test11'
+baseboxname='dealomio-test42'
 
 system_password="vagrant"
 mysql_password="root"
@@ -41,48 +41,128 @@ function helper_writeinformation () {
 		status="failed"
 	fi
 	echo $last_message_status."..............................[".$status."]"
+
+	if [ $last_return_status != 0 ]; then
+		exit $last_return_status
+	fi
 	clean_informations
 }
 
+#######################################################
+# display the help
+#######################################################
+function show_help() {
+	echo "Usage: $0 command"
+	echo ""
+	echo "Command list:"
+	echo "	[-c|--check|check]	 check your configuration"
+	echo "	[-h|--help|help]	 display this help"
+	echo "	[-r|--run|run]		 create the basebox"
+
+
+}
 #######################################################
 # Verification of the system
 #	./configure -like
 #######################################################
 function configuration_checker() {
+	# check 1: do we are in ./baseboxes?
+	tmp=`pwd`
+	last_message_status="script called from ./baseboxes/ ? ..........................................................."
+	if [[ "$tmp" == *"/baseboxes"* ]]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation
 
-	# check 2: do we have ./baseboxes created?
-	# ls... easy
-
-	# check 3: do we have every software we need?
+	# check 2: do we have every software we need?
 	tmp=""
 	tmp=`which vagrant`
 	tmp2=""
 	tmp2=`which veewee`
-	last_message_status="vagrant and veewee are installed? ................................"
-	if [ $tmp != "" -a $tmp2 != "" ]; then
+	last_message_status="vagrant installed? ..........................................................."
+	if [ $tmp != "" ]; then
 		last_return_status=0
 	else
 		last_return_status=1
 	fi
 	helper_writeinformation
 
-	# check4: would it be possible to check if the bios is correctly configured?
-	# check5: do we have a iso directory
-	# check6: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
+	# check 3: do we have every software we need?
+	tmp=""
+	tmp=`which veewee`
+	last_message_status="veewee installed? ............................................................"
+	if [ $tmp != "" ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation
+
+	# check 4: do we ever have a basebox called $baseboxname?
+	tmp=""
+	tmp=`vagrant basebox list |grep $baseboxname`
+	last_message_status="basebox $baseboxname already exists? $tmp................................"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check 5: do we ever have a basebox called $baseboxname?
+	tmp=""
+	tmp=`vagrant box list |grep $baseboxname`
+	last_message_status="box $baseboxname already exists?$tmp ................................"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check6: would it be possible to check if the bios is correctly configured?
+
+	# check7: do we have a iso directory
+	last_message_status="./iso/ directory exists ?  ........................................."
+
+	if [ -d 'iso' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+
+	# check7: do we have a iso directory
+	tmp=""
+	tmp=`ls iso/ |grep $vagrant_template.iso`
+	last_message_status="iso/ contains the iso ?  ............................................"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=1
+	else
+		last_return_status=0
+	fi
+	helper_writeinformation	
+
+	# check8: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
 	last_message_status="basebox_name equality in this script and application.yml ........."
 	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
-	if [ $var != $baseboxname ]; then
-		last_return_status=0
-	else
+	if [[ "$var" ==  *$baseboxname* ]]; then
 		last_return_status=1
+	else
+		last_return_status=0
 	fi
 	helper_writeinformation
 
-	# check 1: are we in the good directory?
-	# use pwd? ls?
-	last_return_status=1
-	last_message_status="CONFIGURATION ........................... pending(not implemented)"
-	helper_writeinformation
+	# check Z: writing pending
+#	last_return_status=1
+#	last_message_status="CONFIGURATION ........................... pending(not implemented)"
+#	helper_writeinformation
 }
 
 #######################################################
@@ -130,7 +210,7 @@ function  basebox_creation_runner() {
 	sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
-	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
+.	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
 	# -n because on t5 we do have No GUI
 	vagrant basebox build $baseboxname -n
 
@@ -138,23 +218,36 @@ function  basebox_creation_runner() {
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
 	vagrant init $baseboxname
-	vagramt up
+	vagrant up
 }
 
 #######################################################
 # run
 #
 #######################################################
+if [ "$1" == "-h" -o "$1" == "--help" -o "$1" == "help" ]; then
+	show_help
+	exit 0;
+fi
 
-echo ""
-echo "CONFIGURATION"
-echo "============="
-configuration_checker
+if [ "$1" == "-c" -o "$1" == "--check" -o "$1" == "check" ]; then
+	echo ""
+	echo "CONFIGURATION"
+	echo "============="
+	configuration_checker
+fi
 
-echo ""
-echo ""
-echo "CREATION OF THE BASEBOX"
-echo "======================="
-basebox_creation_runner
+if [ "$1" == "-r" -o "$1" == "--run" -o "$1" == "run" ]; then
+	echo ""
+	echo ""
+	echo "CREATION OF THE BASEBOX"
+	echo "======================="
+	basebox_creation_runner
+fi
+
+show_help
+exit 0;
+
+
 
 exit 0
