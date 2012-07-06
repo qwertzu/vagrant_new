@@ -17,7 +17,7 @@ class Imageserver < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      sudo('/etc/init.d/apache2 stop')
+      #sudo('/etc/init.d/apache2 stop')
 
       # starting server
       exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")

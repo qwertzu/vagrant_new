@@ -19,7 +19,7 @@ class Bannerserver < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      sudo('service apache2 stop')
+      #sudo('service apache2 stop')
 
       # starting the server / services
       exec_home_non_blocking("rvmsudo passenger start -p5000 -d --user vagrant -e vagrant &>/dev/null")

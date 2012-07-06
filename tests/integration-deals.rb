@@ -24,5 +24,5 @@ vagrant_test do |env|
 
   env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= 'spec/deals'
+  env.spec_path= ['spec/deals']
 end

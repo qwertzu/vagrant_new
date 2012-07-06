@@ -8,5 +8,5 @@ vagrant_test do |env|
 
   env.test_service = Reporting
   env.rails_env = "vagrant"
-  env.spec_path= 'spec/'
+  env.spec_path= ['spec/']
 end

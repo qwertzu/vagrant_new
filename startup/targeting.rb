@@ -16,7 +16,7 @@ class Targeting < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      sudo('service apache2 stop')
+      #sudo('service apache2 stop')
 
       # starting the server / service
       exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &> /dev/null")
