@@ -113,7 +113,7 @@ function configuration_checker() {
 	# check 4: do we ever have a basebox called $baseboxname?
 	tmp=""
 	tmp=`vagrant basebox list |grep $baseboxname`
-	last_message_status="basebox $baseboxname already exists? $tmp"
+	last_message_status="basebox $baseboxname already exists?"
 
 	if [ "$tmp" == '' ]; then
 		last_return_status=0
@@ -125,7 +125,7 @@ function configuration_checker() {
 	# check 5: do we ever have a basebox called $baseboxname?
 	tmp=""
 	tmp=`vagrant box list |grep $baseboxname`
-	last_message_status="box $baseboxname already exists?$tmp"
+	last_message_status="box $baseboxname already exists?"
 
 	if [ "$tmp" == '' ]; then
 		last_return_status=0
@@ -169,10 +169,6 @@ function configuration_checker() {
 	fi
 	helper_writeinformation
 
-	# check Z: writing pending
-	last_return_status=1
-	last_message_status="CONFIGURATION ..... pending(not implemented)"
-	helper_writeinformation
 }
 
 #######################################################
