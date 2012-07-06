@@ -44,7 +44,6 @@ echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
 apt-get install -y mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
-apt-get install cassandra # starten: sudo services cassandra start
 
 # Installing cassandra
 apt-get install -y cassandra --force-yes # starten: sudo services cassandra start
@@ -77,11 +76,18 @@ su vagrant -l -c "git clone git://github.com/joyent/node.git"
 su vagrant -l -c "cd node && git checkout v0.4.9"
 cd node && ./configure && make && make install
 
-cd /home/vagrant/ && echo "v -n avec modification de */lib/***/driverstvm " > version
+cd /home/vagrant/ && echo "v 05.07.2012 am Feierabend " > version
 
-# stopping services
-sudo service apache2 stop
-sudo service rabbitmq-server stop
+# disabling services at boot
+sudo update-rc.d redis-server disable
+sudo update-rc.d rabbitmq-server disable
+sudo update-rc.d apache2 disable
+sudo update-rc.d cassandra disable
+sudo update-rc.d couchdb disable
+## diabling mysql at boot
+sudo sed -i -e "s/^start on (net-device-up$//g" /etc/init/mysql.conf
+sudo sed -i -e "s/^          and local-filesystems$//g" /etc/init/mysql.conf
+sudo sed -i -e "s/^and runlevel.*$//g" /etc/init/mysql.conf
 
 # cleaning up
 rm *.tar.gz

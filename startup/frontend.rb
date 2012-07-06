@@ -14,7 +14,7 @@ class Frontend < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      sudo('/etc/init.d/apache2 stop')
+      #sudo('/etc/init.d/apache2 stop')
 
       # starting server
       #exec_home_non_blocking("RACK_ENV=#{rails_env} rack server") # TODO ACHTUNG port?

@@ -21,7 +21,7 @@ class Feedback < VagrantTest::Service
       #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup -p 80 --user vagrant -e vagrant")            # TODO neue / port
 
       # rackup -p 3003
-      sudo("service apache2 stop")
+      #sudo("service apache2 stop")
 
       exec_home('RACK_ENV=vagrant rackup -p 3003 &')
 

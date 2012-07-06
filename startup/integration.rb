@@ -13,8 +13,8 @@ class Integration < VagrantTest::Service
       exec_home('bundle install')
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      exec_home("export DISPLAY=:99 &")
-      exec_home("Xvfb :99 -screen 0 1024x768x16 &")        # TODO stuck
+      #exec_home("export DISPLAY=:99 &")                    #
+      #exec_home("Xvfb :99 -screen 0 1024x768x16 &")        # TODO stuck und funktioniert nicht!
     end
 
     def code_directory
