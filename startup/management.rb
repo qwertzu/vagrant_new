@@ -15,6 +15,7 @@ class Management < VagrantTest::Service
       exec_home('cp -v config/newrelic.yml.example config/newrelic.yml')
 
       # creating the database
+      sudo('service mysql start')
       exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database deal_management_vagrant"')
       exec_home("RAILS_ENV=#{rails_env} rake db:migrate")
       exec_home("mysql -u"+Settings.mysql_username+" -D deal_management_vagrant -p"+Settings.mysql_password+" -e \"insert into users(id, email,  encrypted_password, authentication_token, is_admin, created_at, updated_at) values('12345', 'vagrant@servtag.com', '$2a$10$k/FYPeqDz1CAzGepLOY6neXVUPowfThBEBt5cDxPbBCZVMKmGmRY2', 'JqqDmevPwzXGeLVgs99p', 1, '2012-06-15 15:09:18', '2012-06-15 15:09:18');\"")

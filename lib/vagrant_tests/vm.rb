@@ -134,7 +134,7 @@ module VagrantTest
         #  puts("#{service.name} runs with global passenger")
         #end
       end
-      puts "enabled apache files"
+      #puts "enabled apache files"
     end
 
     def reload
