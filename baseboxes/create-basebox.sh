@@ -5,7 +5,10 @@
 # Script for configuration and installation of the basebox-we-need with veewee.
 # * creation of the basebox
 # * creation of a servtag-postinstall.sh script that will be copied to definitions/your-basebox/servtag-postinstall.sh and that should be run by veewee
+<<<<<<< HEAD
 # 
+=======
+>>>>>>> 2695b9c5922cfe445afb6d2d42dec7643f448cea
 #
 # src: http://www.dejonghenico.be/unix/create-vagrant-base-boxes-veewee
 
@@ -16,11 +19,18 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
+<<<<<<< HEAD
 baseboxname='servtag-test42'
 
 system_password="vagrant1" #TODO ändern für "vagrant"
 mysql_password="vagrant1" #TODO ändern für "vagrant"
 
+=======
+baseboxname='test-divers6f'
+
+system_password="vagrant"
+mysql_password="root"
+>>>>>>> 2695b9c5922cfe445afb6d2d42dec7643f448cea
 
 #######################################################
 # Helpers
@@ -133,7 +143,12 @@ function  basebox_creation_runner() {
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
 	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
+<<<<<<< HEAD
 	vagrant basebox build $baseboxname
+=======
+	# -n because on t5 we do have No GUI
+	vagrant basebox build $baseboxname -n
+>>>>>>> 2695b9c5922cfe445afb6d2d42dec7643f448cea
 
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname

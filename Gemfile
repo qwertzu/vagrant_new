@@ -5,4 +5,5 @@ gem 'activesupport'
 gem 'vagrant'
 gem 'settingslogic'
 gem 'awesome_print'
-gem 'veewee'
+gem 'veewee', '>=0.3.0alpha9'
+

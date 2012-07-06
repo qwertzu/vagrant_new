@@ -3,3 +3,4 @@ class Settings < Settingslogic
   namespace ENV['RAILS_ENV'] ? ENV['RAILS_ENV'] : ENV['RACK_ENV'] || 'vagrant'
   load!
 end
+

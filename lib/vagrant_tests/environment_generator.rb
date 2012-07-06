@@ -74,7 +74,6 @@ module VagrantTest
         return true
       end
 
-
       def write_hosts(services)
         puts "create hosts file"
         hosts_file = File.open(Settings.hosts_file, 'w')
@@ -112,10 +111,3 @@ module VagrantTest
   end
 
 end
-
-
-
-
-
-
-
