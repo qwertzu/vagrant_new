@@ -92,6 +92,7 @@ module VagrantTest
       end
       #environment.vms.each { |vm| vm.destroy }
       #EnvironmentGenerator.delete_ips
+      environment.vms.each { |vm| vm.halt}
     end
 
   end

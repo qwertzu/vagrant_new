@@ -99,15 +99,15 @@ module VagrantTest
 
     def halt
       raise "Must run `vagrant up`" if !vm.created?
-      raise "Must be running!" if vm.state != :running
+      raise "Must be running!" if vm.state != (:running || :saved)
       puts "About to run #{vm.name}:-halt..."
       vm.halt
       puts "Finished running #{vm.name}:-halt"
     end
 
     def up
-
-      destroy if vm.state == :running
+      puts vm.state
+      halt if vm.state == (:running || :saved)
       unless vm.state == :running
         puts "About to run #{vm.name}:-up..."
         VagrantTest::Lock.sync { vm.up }
