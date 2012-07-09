@@ -15,7 +15,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test12'
+baseboxname='dealomio-test13'
 
 system_password="vagrant"
 mysql_password="root"
@@ -217,7 +217,7 @@ function  basebox_creation_runner() {
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
 .	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
-	# -n because on t5 we do have No GUI
+	# -n because on t5 we do Not have a GUI
 	vagrant basebox build $baseboxname -n
 
 	# Exporting the box to vagrant
@@ -249,6 +249,5 @@ else
 	show_help
 	exit 0;
 fi
-
 
 exit 0

@@ -20,7 +20,7 @@ class Imageserver < VagrantTest::Service
       #sudo('/etc/init.d/apache2 stop')
 
       # starting server
-      exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &>/dev/null")
 
       # starting the daemons
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/deal_consumer_daemon start")

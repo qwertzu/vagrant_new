@@ -39,7 +39,7 @@ vagrant_test do |env|
 
   env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= ['spec/frontend']
+  env.spec_path= ['spec/basics']
 
   # RAILS_ENV=vagrant xvfb-run bundle exec rspec spec/frontend/views_spec.rb:45     TODO start frontend tests
 end

@@ -19,8 +19,8 @@ class Targeting < VagrantTest::Service
       #sudo('service apache2 stop')
 
       # starting the server / service
-      exec_home("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &> /dev/null")
-      exec_home("RAILS_ENV=#{rails_env} rvmsudo ruby dealomio_targeting.rb -p 3001 &")
+      exec_home("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &> /dev/null")
+      exec_home("RAILS_ENV=#{rails_env} rvmsudo ruby dealomio_targeting.rb -p #{ports[1]} &")
 
       # starting the daemons
       exec_home("RAILS_ENV=#{rails_env} ruby script/targeting_publisher_consumer_daemon start")
@@ -32,7 +32,7 @@ class Targeting < VagrantTest::Service
     end
 
     def ports
-      [80]
+      [80, 3001]
     end
 
     def stop
