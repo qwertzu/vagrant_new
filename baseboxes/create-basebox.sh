@@ -15,7 +15,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test13'
+baseboxname='dealomio-test14'
 
 system_password="vagrant"
 mysql_password="root"
@@ -38,9 +38,9 @@ function helper_writeinformation () {
 	total=`tput cols`
 		total=$[$total-20]
 	if [ $last_return_status == 0 ]; then
-		status="OK"
+		status="\e[00;32mOK\e[00m"	#in green
 	else
-		status="failed"
+		status="\e[00;31mfailed\e[00m" # in red
 		total=$[$total-4]
 	fi
 
@@ -51,9 +51,12 @@ function helper_writeinformation () {
 		fullfill=$fullfill.
 		i=$[$i+1]
 	done
-	
 
-	echo "	"$last_message_status" $fullfill["$status"]"
+	if [ $last_return_status == 0 ]; then
+		echo -e "	"$last_message_status" $fullfill["$status"]" # -e for color support
+	else
+		echo -e "	"$last_message_status" $fullfill["$status"]" >&2  # -e for color support to stderr
+	fi
 
 	clean_informations
 }
@@ -78,7 +81,7 @@ function show_help() {
 function configuration_checker() {
 	# check 1: do we are in ./baseboxes?
 	tmp=`pwd`
-	last_message_status="script called from ./baseboxes/ ?"
+	last_message_status="script called from ~/baseboxes/?"
 	if [[ "$tmp" == *"/baseboxes"* ]]; then
 		last_return_status=0
 	else
@@ -137,7 +140,7 @@ function configuration_checker() {
 	# check6: would it be possible to check if the bios is correctly configured?
 
 	# check7: do we have a iso directory
-	last_message_status="./iso/ directory exists ?"
+	last_message_status="~/baseboxes/iso/ directory exists?"
 
 	if [ -d 'iso' ]; then
 		last_return_status=0
@@ -150,7 +153,7 @@ function configuration_checker() {
 	# check7: do we have a iso directory
 	tmp=""
 	tmp=`ls iso/ |grep $vagrant_template.iso`
-	last_message_status="iso/ contains the iso ?"
+	last_message_status="~/iso/ contains the iso?"
 
 	if [ "$tmp" == '' ]; then
 		last_return_status=1
@@ -159,7 +162,20 @@ function configuration_checker() {
 	fi
 	helper_writeinformation	
 
-	# check8: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
+
+	# check8: do we have a baseboxes/Vagrantfile file?
+	tmp=""
+	tmp=`ls Vagrantfile |grep -v grep`
+	last_message_status="~/baseboxes/Vagrantfile exists?"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check9: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
 	last_message_status="basebox_name equality in this script and application.yml"
 	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
 	if [[ "$var" =~  $baseboxname ]]; then
@@ -238,6 +254,9 @@ elif [ "$1" == "-c" -o "$1" == "--check" -o "$1" == "check" ]; then
 	echo ""
 	echo "CONFIGURATION"
 	echo "============="
+	echo ""
+	echo "~ representing the vagrant_test project folder"
+	echo ""
 	configuration_checker
 elif [ "$1" == "-r" -o "$1" == "--run" -o "$1" == "run" ]; then
 	echo ""

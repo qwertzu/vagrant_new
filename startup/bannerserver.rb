@@ -37,6 +37,7 @@ class Bannerserver < VagrantTest::Service
 
     def stop
       #TODO implement me!
+
     end
 
   end
