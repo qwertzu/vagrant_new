@@ -1,6 +1,7 @@
 class Directory_checkor
 
   # To change this template use File | Settings | File Templates.
+  attr_reader :directory
 
   def initialize dir = nil
     @directory = dir

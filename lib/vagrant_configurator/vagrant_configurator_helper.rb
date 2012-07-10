@@ -1,6 +1,6 @@
 def check_inform to_inform
   fullfiller = ""
-  offset_unit= "   "
+  offset_unit= "  "
   fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.deep_cat-10
   offset=""
 
@@ -43,7 +43,7 @@ class IdFactory
     if father_cat == nil
       res.id  = Id.id_generator
     else
-      res.id  = father_cat.to_check_Or_category.size+1
+      #res.id  = father_cat.to_check_Or_category.size+1 TODO actually useless
     end
     res
   end

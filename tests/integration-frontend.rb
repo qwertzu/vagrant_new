@@ -21,6 +21,10 @@ vagrant_test do |env|
   int = env.add_vm(:integration)
   int.add Integration
 
+  tar = env.add_vm(:targeting)
+  tar.add Targeting
+  tar.add Dealkeeper
+
   feedback = env.add_vm(:feedback)
   feedback.add Feedback
 
@@ -29,10 +33,6 @@ vagrant_test do |env|
 
   frontend = env.add_vm(:frontend)
   frontend.add Frontend
-
-  tar = env.add_vm(:targeting)
-  tar.add Targeting
-  tar.add Dealkeeper
 
   rep = env.add_vm(:reporting) # TODO to remove
   rep.add Reporting

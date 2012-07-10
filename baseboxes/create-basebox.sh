@@ -113,6 +113,20 @@ function configuration_checker() {
 	fi
 	helper_writeinformation
 
+
+	# check 3: is VirtualBox correctly installed? TODO because of the needed sudo
+	#tmp=""
+	#tmp=`sudo /etc/init.d/vboxdrv status`
+	#last_message_status="veewee installed?"
+	#if [[ $tmp =~ " are loaded." ]]; then
+	#	last_return_status=0
+	#else
+	#	last_return_status=1
+	#fi
+	#helper_writeinformation
+
+
+
 	# check 4: do we ever have a basebox called $baseboxname?
 	tmp=""
 	tmp=`vagrant basebox list |grep $baseboxname`
