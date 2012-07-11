@@ -1,9 +1,10 @@
 class Yaml_parser
   # To change this template use File | Settings | File Templates.
-  attr_accessor :path, :cat_vagrant
+  attr_accessor :path, :cat_vagrant, :all_projects
 
   def initialize path
-    @all_settings=[]
+    #@all_settings=[]
+    @all_projects=[]
 
     @cat_vagrant = To_check_category.new("Vagrant\'s application.yml file '")
     @cat_vagrant_directory =  To_check_category.new("Related projects exist?", @cat_vagrant)
@@ -13,13 +14,37 @@ class Yaml_parser
     @cat_vagrant.add_a_check @cat_vagrant_passwords
     @cat_vagrant.add_a_check @cat_vagrant_misc
 
-    yaml = File.expand_path(File.dirname(__FILE__) + '/../../config/application.yml', "vagrant")
-    test = Settingslogic.new(yaml)
-    test.vagrant.each{ |t|
-        @all_settings << t
-        find_rules("vagrant_tests", t, yaml)
+    yaml_file = File.expand_path(File.dirname(__FILE__) + '/../../config/application.yml', "vagrant")
+    vagrant_test_yaml = Settingslogic.new(yaml_file)
+    vagrant_test_yaml.vagrant.each{ |t|
+        find_rules("vagrant_tests", t, yaml_file)
         #puts t.inspect
       }
+
+    # we can guess the path to the other project
+    # so we can found the yaml
+    @all_projects.each{ |project|
+      #adding the standard application.yml file (dealkeeper.yml for the dealkeeper project)
+      yaml_file=nil
+      if project[0] != "dealkeeper_path"
+        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/application.yml")
+      else
+        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/dealkeeper.yml")
+      end
+
+      vagrant_test_yaml = Settingslogic.new(yaml_file)
+      vagrant_test_yaml.vagrant.each{ |t|
+        find_rules("vagrant_tests", t, yaml_file)
+      }
+
+      #adding the database.yml for the project that need it
+      yaml_file=nil
+      if project[0] != "management_path" || project[0] != "feedback_path"
+        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/database.yml")
+      end
+
+    }
+
   end
 
   def find_rules project, rules, yaml_path
@@ -36,16 +61,21 @@ class Yaml_parser
       dirCheck = Directory_checkor.new(File.expand_path(File.dirname(__FILE__) +"/../../../.." +rules[1]))
       check =  To_check.new(dirCheck, true, dirCheck.directory.to_s+" exists?", "nil", @cat_vagrant_directory)
       @cat_vagrant_directory.add_a_check check
+      @all_projects << rules
+
     elsif rules[0] == "base_box"
       boxCheck = Box_checkor.new(rules[1])
       check =  To_check.new(boxCheck, true, "basebox #{rules[1]} exists?", "nil", @cat_vagrant_misc)
       @cat_vagrant_misc.add_a_check check
+
     elsif rules[0] == "vagrant_file"
       filecheckor = File_checkor.new(rules[1])
       check =  To_check.new(filecheckor, true, "file #{rules[1]} exists?", "nil", @cat_vagrant_misc)
       @cat_vagrant_misc.add_a_check check
+
     elsif true == false
       #TODO if we know that we wont test those stuff
+
     else
       uncheck = Uncheck_checkor.new
       check =  To_check.new(uncheck, nil, yaml_path+rules.to_s, "nil", @cat_vagrant_unchecked)
