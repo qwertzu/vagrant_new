@@ -8,8 +8,10 @@ class Yaml_parser
     @cat_vagrant = To_check_category.new("Vagrant\'s application.yml file '")
     @cat_vagrant_directory =  To_check_category.new("Related projects exist?", @cat_vagrant)
     @cat_vagrant_passwords =  To_check_category.new("Passwords are consistent?", @cat_vagrant)
+    @cat_vagrant_misc =  To_check_category.new("Misc. ", @cat_vagrant)
     @cat_vagrant.add_a_check @cat_vagrant_directory
     @cat_vagrant.add_a_check @cat_vagrant_passwords
+    @cat_vagrant.add_a_check @cat_vagrant_misc
 
     yaml = File.expand_path(File.dirname(__FILE__) + '/../../config/application.yml', "vagrant")
     test = Settingslogic.new(yaml)
@@ -34,6 +36,14 @@ class Yaml_parser
       dirCheck = Directory_checkor.new(File.expand_path(File.dirname(__FILE__) +"/../../../.." +rules[1]))
       check =  To_check.new(dirCheck, true, dirCheck.directory.to_s+" exists?", "nil", @cat_vagrant_directory)
       @cat_vagrant_directory.add_a_check check
+    elsif rules[0] == "base_box"
+      boxCheck = Box_checkor.new(rules[1])
+      check =  To_check.new(boxCheck, true, "basebox #{rules[1]} exists?", "nil", @cat_vagrant_misc)
+      @cat_vagrant_misc.add_a_check check
+    elsif rules[0] == "vagrant_file"
+      filecheckor = File_checkor.new(rules[1])
+      check =  To_check.new(filecheckor, true, "file #{rules[1]} exists?", "nil", @cat_vagrant_misc)
+      @cat_vagrant_misc.add_a_check check
     elsif true == false
       #TODO if we know that we wont test those stuff
     else

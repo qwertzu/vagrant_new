@@ -3,7 +3,7 @@
 
 Vagrant::Config.run do |config|
 <% config.vms.each do |vm| %>
-  config.vm.define :<%=vm.label%> do |<%= vm.name %>_config|
+  config.vm.define :<%=vm.name%> do |<%= vm.name %>_config|
     <%= vm.name %>_config.vm.box = "<%= vm.base_box %>"
     <%= vm.name %>_config.vm.host_name = '<%= vm.name %>'
     <%= vm.name %>_config.vm.network :hostonly, "<%= vm.ip %>"
@@ -12,7 +12,7 @@ Vagrant::Config.run do |config|
     <%= vm.name %>_config.vm.forward_port <%= port %>, <%= forward %>
     <% end %>
     <%vm.services.each do |service|%>
-    <%= vm.name %>_config.vm.share_folder "<%=service.label%>" , "/vagrant/<%=service.name%>", "<%=service.code_directory%>"
+    <%= vm.name %>_config.vm.share_folder "<%=service.name%>" , "/vagrant/<%=service.name%>", "<%=service.code_directory%>"
     <%end%>    
   end
 <% end %>

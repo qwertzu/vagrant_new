@@ -45,7 +45,7 @@ module VagrantTest
 
     def initialize name, base_box
       @base_box = base_box
-      @label    = name
+      @name    = name
     end
 
     def env
@@ -53,11 +53,11 @@ module VagrantTest
     end
 
     def vm
-      @vm ||= env.vms[label]
+      @vm ||= env.vms[name]
     end
 
     def exec(cmd, dir = '/')
-      puts "#{vm.label}: Execute #{cmd}"
+      puts "#{vm.name}: Execute #{cmd}"
       message = ""
       begin
         vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
@@ -72,7 +72,7 @@ module VagrantTest
     end
 
     def sudo(cmd)
-      puts "#{vm.label}: Sudo #{cmd}"
+      puts "#{vm.name}: Sudo #{cmd}"
       message = ""
       begin
         vm.channel.sudo("#{cmd}") do |output,data|
@@ -100,18 +100,18 @@ module VagrantTest
     def halt
       raise "Must run `vagrant up`" if !vm.created?
       raise "Must be running!" if vm.state != :running
-      puts "About to run #{vm.label}:-halt..."
+      puts "About to run #{vm.name}:-halt..."
       vm.halt
-      puts "Finished running #{vm.label}:-halt"
+      puts "Finished running #{vm.name}:-halt"
     end
 
     def up
 
       destroy if vm.state == :running
       unless vm.state == :running
-        puts "About to run #{vm.label}:-up..."
+        puts "About to run #{vm.name}:-up..."
         VagrantTest::Lock.sync { vm.up }
-        puts "Finished running #{vm.label}:-up"
+        puts "Finished running #{vm.name}:-up"
       end
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
