@@ -1,7 +1,7 @@
 def check_inform to_inform
   fullfiller = ""
   offset_unit= "  "
-  fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.deep_cat-10
+  fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.deep_cat-20
   offset=""
 
   if to_inform.status == nil

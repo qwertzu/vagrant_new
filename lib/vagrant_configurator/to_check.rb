@@ -24,7 +24,7 @@ class To_check
 
 
   def check
-   if @to_check.check == 0
+   if @to_check.check == expected
      @status=0
    else
     @status=1 # todo check not_expected

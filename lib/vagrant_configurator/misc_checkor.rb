@@ -8,13 +8,10 @@ class Box_checkor
   end
 
   def check
-    #puts  "\n\n\n\n\n"
-    #puts %x[vagrant box list |grep #{@name}]
-    #puts  "\n\n\n\n\n"
     if %x[vagrant box list |grep #{@name}] =~ /^#{@name}$/
-      0
+      true
     else
-      1
+      false
     end
   end
 end

@@ -9,9 +9,9 @@ class Directory_checkor
 
   def check
     if File.directory? @directory
-      0
+      true
     else
-      1
+      false
     end
   end
 end
@@ -26,9 +26,9 @@ class File_checkor
 
   def check
     if File.exist? @file
-      0
+      true
     else
-      1
+      false
     end
   end
 end

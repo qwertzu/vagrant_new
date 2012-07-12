@@ -13,6 +13,9 @@ vagrant_test do |env|
   tar.add Targeting
   tar.add Dealkeeper
 
+  ana = env.add_vm(:analytics)
+  ana.add Analytics
+
   int = env.add_vm(:integration)
   int.add Integration
 

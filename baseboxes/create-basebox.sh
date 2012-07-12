@@ -15,7 +15,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test14'
+baseboxname='dealomio-test20'
 
 system_password="vagrant"
 mysql_password="root"
@@ -166,7 +166,7 @@ function configuration_checker() {
 
 	# check7: do we have a iso directory
 	tmp=""
-	tmp=`ls iso/ |grep $vagrant_template.iso`
+	tmp=`ls iso/ 2> /dev/null |grep $vagrant_template.iso `
 	last_message_status="~/iso/ contains the iso?"
 
 	if [ "$tmp" == '' ]; then
@@ -179,7 +179,7 @@ function configuration_checker() {
 
 	# check8: do we have a baseboxes/Vagrantfile file?
 	tmp=""
-	tmp=`ls Vagrantfile |grep -v grep`
+	tmp=`ls Vagrantfile 2> /dev/null |grep -v grep `
 	last_message_status="~/baseboxes/Vagrantfile exists?"
 
 	if [ "$tmp" == '' ]; then
@@ -246,9 +246,9 @@ function  basebox_creation_runner() {
 	sed -i -e "s/\/opt\/ruby\/bin\/gem install puppet --no-ri --no-rdoc//g" definitions/$baseboxname/postinstall.sh
 	sed -i -e "s/echo 'PATH=\$PATH:\/opt\/ruby\/bin\/'> \/etc\/profile.d\/vagrantruby.sh//g" definitions/$baseboxname/postinstall.sh
 	
-.	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
+	# Just build it! (will start at the end the modified postinstall.sh and servtag-postinstall.sh)
 	# -n because on t5 we do Not have a GUI
-	vagrant basebox build $baseboxname -n
+	vagrant basebox build $baseboxname
 
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
