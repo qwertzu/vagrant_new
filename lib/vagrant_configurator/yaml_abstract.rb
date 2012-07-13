@@ -1,10 +1,11 @@
 # Represents a Yaml configuration file
 # The class attributes represent an agregator for all yaml for all project
 # For the cross-projects configuration, you also have the class method self.run
+require File.expand_path(File.dirname(__FILE__) + '/vagrant_configurator_helper')
 class Yaml_abstract
 
   attr_reader :cat_checkors, :settings, :management
-  attr_accessor :rules_not_created
+  attr_accessor :selected_settings
 
   #path to the files
   @@urls = []
@@ -31,9 +32,9 @@ class Yaml_abstract
 
     @@urls << url
     @category_father = category_father
-    @cat_checkors = To_check_category.new("#{@name} URL", @category_father)
+    @cat_checkors = ValidatorCatagory.new("#{@name} URL", @category_father)
     @category_father.add_a_check @cat_checkors
-    @rules_not_created = []
+    @selected_settings = []
 
     case @name
       when "management_path"
@@ -69,59 +70,11 @@ class Yaml_abstract
   ## assessment: all the project are already created (in order to be linked in the class attributes)
   def run
     @@settings = parse_settings
-    find_rules_cross_projects_passwords
-    create_rules_cross_project
+    add_supported_settings
+    create_validators_from_settings
   end
 
-  ## From the rules we know, we will found the one which will have to be checked
-  def create_rules_cross_project     #TODO RENAME
-    @rules_not_created.each_index{ |i|
-
-      rules_to_create = @rules_not_created[i]
-      #puts "gefunden"+@rules_not_created.inspect
-      if i < @rules_not_created.size-1
-        checkor = Password_checkor.new(@rules_not_created[0][1], @rules_not_created[i+1][1])     #TODO rename
-        check =  To_check.new(checkor, true, "beetween #{@rules_not_created[0]} and  #{@rules_not_created[i+1]}", "nil", @cat_checkors)
-        @cat_checkors.add_a_check check
-      end
-    }
-  end
-
-  def find_rules_cross_projects_passwords #TODO RENAME
-    @@settings.each{ |rules|
-     # puts rules.inspect
-      if @yaml_path =~ /database.yml$/
-        if rules[0] == "username"
-       #   @settings << [@name, rules[1]]
-          #return
-        elsif rules[0] == "password"
-        #  @settings <<   [@name, rules[1]]
-        #return
-        end
-      else # it's a application.yml document'
-        if rules[0] == "mysql_username"
-          #@settings << [@name, rules[1]]
-          # return
-        elsif rules[0] == "mysql_password"
-         # @settings <<   [@name, rules[1]]
-         #return
-        elsif rules[0] == "management_base_url" ||  rules[0] == "rest_host" || rules[0] == "management_url" || rules[0] == "deal_management_host"  || rules[0] == "rtc.rest_host"
-         @@management.rules_not_created << [rules[0], rules[1]]    unless @name != "management_path"
-         #return
-        elsif rules[0] == "targeting_host" || rules[0] == "api_url" ||  rules[0] == "targeting_base_url" ||  rules[0] == "targeting_url" ||  rules[0] == "targetingApi"
-          @@targeting.rules_not_created << [rules[0], rules[1]]   unless @name != "targeting_path"
-          #return
-        else
-          uncheck = Uncheck_checkor.new
-          check =  To_check.new(uncheck, nil, @name+rules.to_s, "nil", @category_father)
-          #@category_father.add_a_noncheck check
-        end
-      end
-    }
-    puts "\n"
-  end
-
-
+  private
 
   # read the settings of each yaml file and add them to the class attribute @@settings
   def parse_settings
@@ -138,6 +91,52 @@ class Yaml_abstract
       }
     }
     complex_settings
+  end
+
+  def add_supported_settings
+    @@settings.each{ |rules|
+      # puts rules.inspect
+      if @yaml_path =~ /database.yml$/
+        if rules[0] == "username"
+          #   @settings << [@name, rules[1]]
+          #return
+        elsif rules[0] == "password"
+          #  @settings <<   [@name, rules[1]]
+          #return
+        end
+      else # it's a application.yml document'
+        if rules[0] == "mysql_username"
+          #@settings << [@name, rules[1]]
+          # return
+        elsif rules[0] == "mysql_password"
+          # @settings <<   [@name, rules[1]]
+          #return
+        elsif rules[0] == "management_base_url" ||  rules[0] == "rest_host" || rules[0] == "management_url" || rules[0] == "deal_management_host"  || rules[0] == "rtc.rest_host"
+          @@management.selected_settings << [rules[0], rules[1]]    unless @name != "management_path"
+          #return
+        elsif rules[0] == "targeting_host" || rules[0] == "api_url" ||  rules[0] == "targeting_base_url" ||  rules[0] == "targeting_url" ||  rules[0] == "targetingApi"
+          @@targeting.selected_settings << [rules[0], rules[1]]   unless @name != "targeting_path"
+          #return
+        else
+          uncheck = UnsupportedSettingCheckor.new
+          failidator =  Validator.new(uncheck, nil, @name+rules.to_s, "nil", @cat_checkors)
+          @cat_checkors.add_a_noncheck failidator
+        end
+      end
+    }
+    puts "\n"
+  end
+
+  ## From the settings we selected (=taht are supported), we will found the one which will have to be checked
+  def create_validators_from_settings
+    @selected_settings.each_index{ |i|
+      validator_to_create = @selected_settings[i]
+      if i < @selected_settings.size-1
+        checkor = Password_checkor.new(@selected_settings[0][1], @selected_settings[i+1][1])     #TODO rename
+        validator =  Validator.new(checkor, true, "beetween #{@selected_settings[0]} and  #{@selected_settings[i+1]}", "nil", @cat_checkors)
+        @cat_checkors.add_a_check validator
+      end
+    }
   end
 
   ## In a yaml file, the settings can be categorize and under categorized.
@@ -164,28 +163,7 @@ class Yaml_abstract
 
       if true==false
       elsif setting[1].class != Array &&  setting[1].class != Hash
-        #return [setting] # should be a [[ ]]
-        #res = [setting]
       elsif setting[1].class == Array
-        #puts "error!"
-        #current=setting
-        #setting.each_index{ |i|
-        #  if i == 0
-        #    break
-        #  else
-        #    hash = setting[i]
-        #  end
-        #  hash[1]="PD" if hash[1]==nil
-        #  new_obj=[root_key+"."+hash[0], hash[1]]
-        #  current <<  new_obj
-        #  current.delete_at(1)
-        #}
-        #current.delete_at(0)
-        #puts "\t o1="+current.inspect
-        #puts "\t o1="+neo_settings.inspect
-        #uncomplex_settings current
-
-
       elsif setting[1].class == Hash
         current=setting
         setting[1].each{ |hash|
