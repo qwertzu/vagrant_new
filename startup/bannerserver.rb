@@ -23,7 +23,7 @@ class Bannerserver < VagrantTest::Service
 
       # starting the server / services
       exec_home_non_blocking("rvmsudo passenger start -p#{ports[1]} -d --user vagrant -e  #{rails_env} &>/dev/null")
-      exec_home("rvmsudo  thin start -p#{ports[0]} --user vagrant -e  #{rails_env} -d")
+      exec_home("rvmsudo thin start -p#{ports[0]} --user vagrant -e  #{rails_env} -d")
       exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon start")
     end
 

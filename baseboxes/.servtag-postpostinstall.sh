@@ -59,8 +59,9 @@ su vagrant -l -c 'chmod +x rvm-installer'
 su vagrant -l -c './rvm-installer'
 su vagrant -l -c 'rvm use 1.9.2-p320 --install'
 su vagrant -l -c "rvm use 1.9.2-p320 && gem install bundler rubygems-bundler rvm rake rspec"
-su vagrant -l -c "rvm use 1.9.2-p320 && gem install passenger"
+su vagrant -l -c "rvm use 1.9.2-p320 && gem install passenger --no-rdoc --no-ri"
 su vagrant -l -c "echo 'export rvm_trust_rvmrcs_flag=1' >.rvmrc"
+su vagrant -l -c "echo 'gem: --no-ri --no-rdoc' >.rvmrc"
 su vagrant -l -c "chmod 664 .rvmrc"
 
 sudo adduser vagrant rvm
@@ -84,6 +85,13 @@ sudo update-rc.d rabbitmq-server disable
 sudo update-rc.d apache2 disable
 sudo update-rc.d cassandra disable
 sudo update-rc.d couchdb disable
+
+# Starting passenger standalone, because he has to compile, it's long, and we do not want to do it on every VM
+# deerty ack NEW
+su vagrant -l -c "rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null"
+su vagrant -l -c "rvmsudo passenger stop -p80 &>/dev/null"
+
+
 ## diabling mysql at boot
 sudo sed -i -e "s/^start on (net-device-up$//g" /etc/init/mysql.conf
 sudo sed -i -e "s/^          and local-filesystems$//g" /etc/init/mysql.conf

@@ -71,7 +71,7 @@ class Yaml_abstract
   def run
     @@settings = parse_settings
     add_supported_settings
-    create_validators_from_settings
+    create_validators_from_setting
   end
 
   private
@@ -95,7 +95,6 @@ class Yaml_abstract
 
   def add_supported_settings
     @@settings.each{ |rules|
-      # puts rules.inspect
       if @yaml_path =~ /database.yml$/
         if rules[0] == "username"
           #   @settings << [@name, rules[1]]
@@ -124,11 +123,10 @@ class Yaml_abstract
         end
       end
     }
-    puts "\n"
   end
 
   ## From the settings we selected (=taht are supported), we will found the one which will have to be checked
-  def create_validators_from_settings
+  def create_validators_from_setting
     @selected_settings.each_index{ |i|
       validator_to_create = @selected_settings[i]
       if i < @selected_settings.size-1

@@ -17,7 +17,7 @@ class Banner < VagrantTest::Service
       # starting server
       #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup server --user vagrant -e vagrant")
       #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant"')
-      exec_home("daemon -X 'cd /vagrant/banner && rake server RACK=#{rails_env} > /vagrant/banner/log-banner' ")
+      exec_home("daemon -X 'rake server' --chdir=/vagrant/#{@name} --env='RACK_ENV=@{rail_env}' --errlog=/vagrant/#{@name}-log-err --dbglog=/vagrant/#{@name}-log-log2 --output= vagrant/#{@name}-out --stdout=/vagrant/#{@name}-out2 --stderr=/vagrant/#{@name}-err")
       # rake server RACK_ENV=integration
 
     end

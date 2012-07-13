@@ -106,21 +106,21 @@ module VagrantTest
     end
 
     def up
-
       destroy if vm.state == :running
       unless vm.state == :running
         puts "About to run #{vm.name}:-up..."
         VagrantTest::Lock.sync { vm.up }
         puts "Finished running #{vm.name}:-up"
       end
-      puts "Copy config files"
+      puts "Copy config files TODO TO REMOVE"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
 
 
       self.services.each do |service|
-        service.exec_home("gem install bundler")
-        service.exec_home("bundle")
-        service.exec_home("gem install passenger")
+        service.exec_home("gem install bundler")     # TODO REMOVE
+        service.exec_home("bundle")                 # TODO: install the longer and mostly used gem
+        #service.exec_home("gem install passenger --no-rdoc --no-ri") # TODO install a global passenger, so that it will be really quicker to boot
+
         #begin
         #  ruby_version = service.exec_home('rvm current').chomp
         #  passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]

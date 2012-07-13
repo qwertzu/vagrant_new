@@ -57,7 +57,7 @@ class ValidatorCatagory
 
     }
     @@all_main_categories.each{ |category|
-      category.print_non_check
+    #  category.print_non_check
     }
 
 

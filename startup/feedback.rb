@@ -23,7 +23,7 @@ class Feedback < VagrantTest::Service
       # rackup -p 3003
       #sudo("service apache2 stop")
 
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]} > /vagrant/feedback/log-feed'")
+      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]}' --chdir=/vagrant/#{@name} --env='RACK_ENV=@{rail_env}' --errlog=/vagrant/#{@name}-log-err --dbglog=/vagrant/#{@name}-log-log2 --output= vagrant/#{@name}-out --stdout=/vagrant/#{@name}-out2 --stderr=/vagrant/#{@name}-err")
 
       #exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger -p 80  -d --user vagrant -e vagrant &> /dev/null")
 

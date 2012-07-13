@@ -88,7 +88,17 @@ module VagrantTest
 
       #Process.waitall
       environment.spec_path.each do |spec|
-        environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "} bundle exec rspec #{spec} --color #{'--format '<< environment.format unless environment.format.eql? " "}") unless environment.test_service == nil
+        env_variables= "RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "}"
+        options=""
+        #options = "--color #{'--format '<< environment.format unless environment.format.eql? " "}" #TODO-test
+
+        after_command=""
+        before_command=""
+        if spec =~ /frontend/
+          before_command="xvfb-run"
+        end
+
+        environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
       end
       #environment.vms.each { |vm| vm.destroy }
       #EnvironmentGenerator.delete_ips

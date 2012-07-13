@@ -55,6 +55,7 @@ class Yaml_parser
   @all_yaml.each{ |project|
     project.run
     }
+    #Yaml_abstract.run
 
   end
    # TODO move it for OO

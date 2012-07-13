@@ -9,6 +9,7 @@ def print_validation_result to_inform
   fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.display_offset-20
   offset=""
 
+  # OK / failed?
   if to_inform.status == nil
     status_info=""
   elsif to_inform.status == 0
@@ -17,6 +18,14 @@ def print_validation_result to_inform
   else
     status_info="FAILED".red
     fullfiller_size =  fullfiller_size-10
+  end
+
+  # left-align according to numerotation size
+  fullfiller_size = fullfiller_size - to_inform.display_offset*2
+
+  # if more than 10 items
+  if to_inform.id.id >= 10
+    fullfiller_size = fullfiller_size -1
   end
 
   for i in 1 .. fullfiller_size
