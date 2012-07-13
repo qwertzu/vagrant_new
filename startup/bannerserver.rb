@@ -22,8 +22,8 @@ class Bannerserver < VagrantTest::Service
       #sudo('service apache2 stop')
 
       # starting the server / services
-      exec_home_non_blocking("rvmsudo passenger start -p5000 -d --user vagrant -e vagrant &>/dev/null")
-      exec_home("rvmsudo  thin start -p80 --user vagrant -e vagrant -d")
+      exec_home_non_blocking("rvmsudo passenger start -p#{ports[1]} -d --user vagrant -e  #{rails_env} &>/dev/null")
+      exec_home("rvmsudo  thin start -p#{ports[0]} --user vagrant -e  #{rails_env} -d")
       exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon start")
     end
 
@@ -37,6 +37,7 @@ class Bannerserver < VagrantTest::Service
 
     def stop
       #TODO implement me!
+
     end
 
   end

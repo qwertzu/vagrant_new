@@ -13,10 +13,15 @@ vagrant_test do |env|
   tar.add Targeting
   tar.add Dealkeeper
 
+  ana = env.add_vm(:analytics)
+  ana.add Analytics
+
   int = env.add_vm(:integration)
   int.add Integration
 
   env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= ['spec/analytics']
+  env.spec_path= ['spec/basics']
+  env.ci_rep = "./../reports"
+  env.format = "CI::Reporter::RSpec"
 end

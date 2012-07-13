@@ -12,6 +12,9 @@ vagrant_test do |env|
   ban = env.add_vm(:bannerserver)
   ban.add Bannerserver
 
+  ban2 = env.add_vm(:banner)
+  ban2.add Banner
+
   ima = env.add_vm(:imageserver)
   ima.add Imageserver
 
@@ -21,4 +24,6 @@ vagrant_test do |env|
   env.test_service = Integration
   env.rails_env = "vagrant"
   env.spec_path= ['spec/imageserver']
+  env.ci_rep = "./../reports"
+  env.format = "CI::Reporter::RSpec"
 end

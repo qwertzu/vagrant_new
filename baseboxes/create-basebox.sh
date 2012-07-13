@@ -18,6 +18,7 @@ vagrant_template="ubuntu-11.10-server-amd64"
 
 baseboxname='dealomio-test22'
 
+
 system_password="vagrant"
 mysql_password="root"
 
@@ -36,54 +37,170 @@ function clean_informations () {
 #
 # Format the ouput to inform the user of his configuration
 function helper_writeinformation () {
+	total=`tput cols`
+		total=$[$total-20]
 	if [ $last_return_status == 0 ]; then
-		status="OK"
+		status="\e[00;32mOK\e[00m"	#in green
 	else
-		status="failed"
+		status="\e[00;31mfailed\e[00m" # in red
+		total=$[$total-4]
 	fi
-	echo $last_message_status."..............................[".$status."]"
+
+	i="0"
+	fullfill=""
+	while [ $i -lt $[$total-${#last_message_status}] ]
+	do
+		fullfill=$fullfill.
+		i=$[$i+1]
+	done
+
+	if [ $last_return_status == 0 ]; then
+		echo -e "	"$last_message_status" $fullfill["$status"]" # -e for color support
+	else
+		echo -e "	"$last_message_status" $fullfill["$status"]" >&2  # -e for color support to stderr
+	fi
+
 	clean_informations
 }
 
+#######################################################
+# display the help
+#######################################################
+function show_help() {
+	echo "Usage: $0 command"
+	echo ""
+	echo "Command list:"
+	echo "	[-c|--check|check]	 check your configuration"
+	echo "	[-h|--help|help]	 display this help"
+	echo "	[-r|--run|run]		 create the basebox"
+
+
+}
 #######################################################
 # Verification of the system
 #	./configure -like
 #######################################################
 function configuration_checker() {
+	# check 1: do we are in ./baseboxes?
+	tmp=`pwd`
+	last_message_status="script called from ~/baseboxes/?"
+	if [[ "$tmp" == *"/baseboxes"* ]]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation
 
-	# check 2: do we have ./baseboxes created?
-	# ls... easy
-
-	# check 3: do we have every software we need?
+	# check 2: do we have every software we need?
 	tmp=""
 	tmp=`which vagrant`
 	tmp2=""
 	tmp2=`which veewee`
-	last_message_status="vagrant and veewee are installed? ................................"
-	if [ $tmp != "" -a $tmp2 != "" ]; then
+	last_message_status="vagrant installed?"
+	if [ $tmp != "" ]; then
 		last_return_status=0
 	else
 		last_return_status=1
 	fi
 	helper_writeinformation
 
-	# check4: would it be possible to check if the bios is correctly configured?
-	# check5: do we have a iso directory
-	# check6: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
-	last_message_status="basebox_name equality in this script and application.yml ........."
+	# check 3: do we have every software we need?
+	tmp=""
+	tmp=`which veewee`
+	last_message_status="veewee installed?"
+	if [ $tmp != "" ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation
+
+
+	# check 3: is VirtualBox correctly installed? TODO because of the needed sudo
+	#tmp=""
+	#tmp=`sudo /etc/init.d/vboxdrv status`
+	#last_message_status="veewee installed?"
+	#if [[ $tmp =~ " are loaded." ]]; then
+	#	last_return_status=0
+	#else
+	#	last_return_status=1
+	#fi
+	#helper_writeinformation
+
+
+
+	# check 4: do we ever have a basebox called $baseboxname?
+	tmp=""
+	tmp=`vagrant basebox list |grep $baseboxname`
+	last_message_status="basebox $baseboxname already exists?"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check 5: do we ever have a basebox called $baseboxname?
+	tmp=""
+	tmp=`vagrant box list |grep $baseboxname`
+	last_message_status="box $baseboxname already exists?"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check6: would it be possible to check if the bios is correctly configured?
+
+	# check7: do we have a iso directory
+	last_message_status="~/baseboxes/iso/ directory exists?"
+
+	if [ -d 'iso' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+
+	# check7: do we have a iso directory
+	tmp=""
+	tmp=`ls iso/ 2> /dev/null |grep $vagrant_template.iso `
+	last_message_status="~/iso/ contains the iso?"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=1
+	else
+		last_return_status=0
+	fi
+	helper_writeinformation	
+
+
+	# check8: do we have a baseboxes/Vagrantfile file?
+	tmp=""
+	tmp=`ls Vagrantfile 2> /dev/null |grep -v grep `
+	last_message_status="~/baseboxes/Vagrantfile exists?"
+
+	if [ "$tmp" == '' ]; then
+		last_return_status=0
+	else
+		last_return_status=1
+	fi
+	helper_writeinformation	
+
+	# check9: Are &baseboxname and ../config/application.yml vagrant.base_box dasselber?
+	last_message_status="basebox_name equality in this script and application.yml"
 	var=`cat ../config/application.yml |grep base_box: | cut -d: -f2`
-	if [ $var != $baseboxname ]; then
+	if [[ "$var" =~  $baseboxname ]]; then
 		last_return_status=0
 	else
 		last_return_status=1
 	fi
 	helper_writeinformation
 
-	# check 1: are we in the good directory?
-	# use pwd? ls?
-	last_return_status=1
-	last_message_status="CONFIGURATION ........................... pending(not implemented)"
-	helper_writeinformation
 }
 
 #######################################################
@@ -136,27 +253,38 @@ function  basebox_creation_runner() {
 	# -n because on t5 we do have No GUI
 	vagrant basebox build $baseboxname -n
 
+
 	# Exporting the box to vagrant
 	vagrant basebox export $baseboxname
 	vagrant box add $baseboxname ./$baseboxname.box 
 	vagrant init $baseboxname
-	vagramt up
+	vagrant up
 }
 
 #######################################################
 # run
 #
 #######################################################
-
-echo ""
-echo "CONFIGURATION"
-echo "============="
-configuration_checker
-
-echo ""
-echo ""
-echo "CREATION OF THE BASEBOX"
-echo "======================="
-basebox_creation_runner
+if [ "$1" == "-h" -o "$1" == "--help" -o "$1" == "help" ]; then
+	show_help
+	exit 0;
+elif [ "$1" == "-c" -o "$1" == "--check" -o "$1" == "check" ]; then
+	echo ""
+	echo "CONFIGURATION"
+	echo "============="
+	echo ""
+	echo "~ representing the vagrant_test project folder"
+	echo ""
+	configuration_checker
+elif [ "$1" == "-r" -o "$1" == "--run" -o "$1" == "run" ]; then
+	echo ""
+	echo ""
+	echo "CREATION OF THE BASEBOX"
+	echo "======================="
+	basebox_creation_runner
+else
+	show_help
+	exit 0;
+fi
 
 exit 0

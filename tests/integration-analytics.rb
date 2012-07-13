@@ -18,4 +18,6 @@ vagrant_test do |env|
   env.test_service = Integration
   env.rails_env = "vagrant"
   env.spec_path= ['spec/analytics']
+  env.ci_rep = "./../reports"
+  env.format = "CI::Reporter::RSpec"
 end

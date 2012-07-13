@@ -91,7 +91,7 @@ sudo update-rc.d couchdb disable
 ## diabling mysql at boot
 sudo sed -i -e "s/^start on (net-device-up$//g" /etc/init/mysql.conf
 sudo sed -i -e "s/^          and local-filesystems$//g" /etc/init/mysql.conf
-sudo sed -i -e "s/^and runlevel.*$//g" /etc/init/mysql.conf
+sudo sed -i -e "s/and runlevel.*$//g" /etc/init/mysql.conf
 
 # cleaning up
 rm *.tar.gz

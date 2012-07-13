@@ -17,10 +17,10 @@ class Reporting < VagrantTest::Service
 
       # starting/stoping server services
       #sudo('service apache2 stop')
-      sudo("ps -edf | grep couch | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")   # kill the process that is busying the port :5984 / was at the end
+      sudo("ps -edf | grep couch | grep -v grep| tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")   # kill the process that is busying the port :5984 / was at the end
       sudo('service couchdb start') # was at the end 2
 
-      exec_home_non_blocking("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")
+      exec_home_non_blocking("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &>/dev/null")
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb start -p 3001 &")
 
       # starting the daemons

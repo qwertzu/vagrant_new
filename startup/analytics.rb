@@ -15,12 +15,12 @@ class Analytics < VagrantTest::Service
       exec_home('cp -v config/couchdb.yml.example config/couchdb.yml')
 
       # starting/stoping services
-      sudo('service apache2 stop')
+      sudo('service apache2 stop')      # TODO useless
       exec_home("daemon -X 'cassandra -f'")
       exec_home("nodetool -h 127.0.0.1 ring")
 
       # starting server
-      exec_home_non_blocking("rvmsudo passenger start -p80 -d --user vagrant -e vagrant &>/dev/null")
+      exec_home_non_blocking("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &>/dev/null")
 
       # starting the daemons
       exec_home("RAILS_ENV=#{rails_env} ruby script/analytics_consumer_deamon.rb start")
