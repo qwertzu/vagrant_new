@@ -7,8 +7,10 @@ class Yaml_parser
     @all_projects=[]
     @mysql_username=[]
     @mysql_passwords=[]
-    @management_url=[]
-    @targeting_url=[]
+    #@management_url=[]
+    #@targeting_url=[]
+    @all_yaml=[]
+
 
     @cat_vagrant = To_check_category.new("Vagrant\'s application.yml file ")
     @cat_vagrant_directory =  To_check_category.new("Related projects exist?", @cat_vagrant)
@@ -23,17 +25,17 @@ class Yaml_parser
     @cat_vagrant_mysql_username = To_check_category.new("Username", @cat_consistency_mysql)
     @cat_vagrant_mysql_passwords = To_check_category.new("Passwords", @cat_consistency_mysql)
 
-    @cat_consistency_url_management = To_check_category.new("Management URL", @cat_consistency_url)
-    @cat_consistency_url_targeting = To_check_category.new("Targeting URL", @cat_consistency_url)
-    @cat_consistency_url_dealkeeper = To_check_category.new("Dealkeeper URL", @cat_consistency_url)
-    @cat_consistency_url_integratio = To_check_category.new("Integration URL", @cat_consistency_url)
-    @cat_consistency_url_bannerserv = To_check_category.new("Bannerserver URL", @cat_consistency_url)
-    @cat_consistency_url_imageserv = To_check_category.new("Imageserver URL", @cat_consistency_url)
-    @cat_consistency_url_reporting = To_check_category.new("Reporting URL", @cat_consistency_url)
-    @cat_consistency_url_analytics = To_check_category.new("Analytics URL", @cat_consistency_url)
-    @cat_consistency_url_feedback = To_check_category.new("Feedback URL", @cat_consistency_url)
-    @cat_consistency_url_banner = To_check_category.new("Banner URL", @cat_consistency_url)
-    @cat_consistency_url_frontend = To_check_category.new("Frontend URL", @cat_consistency_url)
+    #@cat_consistency_url_management = To_check_category.new("Management URL", @cat_consistency_url)
+    #@cat_consistency_url_targeting = To_check_category.new("Targeting URL", @cat_consistency_url)
+    #@cat_consistency_url_dealkeeper = To_check_category.new("Dealkeeper URL", @cat_consistency_url)
+    #@cat_consistency_url_integratio = To_check_category.new("Integration URL", @cat_consistency_url)
+    #@cat_consistency_url_bannerserv = To_check_category.new("Bannerserver URL", @cat_consistency_url)
+    #@cat_consistency_url_imageserv = To_check_category.new("Imageserver URL", @cat_consistency_url)
+    #@cat_consistency_url_reporting = To_check_category.new("Reporting URL", @cat_consistency_url)
+    #@cat_consistency_url_analytics = To_check_category.new("Analytics URL", @cat_consistency_url)
+    #@cat_consistency_url_feedback = To_check_category.new("Feedback URL", @cat_consistency_url)
+    #@cat_consistency_url_banner = To_check_category.new("Banner URL", @cat_consistency_url)
+    #@cat_consistency_url_frontend = To_check_category.new("Frontend URL", @cat_consistency_url)
 
     @cat_consistency.add_a_check @cat_consistency_mysql
     @cat_consistency.add_a_check @cat_consistency_url
@@ -41,17 +43,17 @@ class Yaml_parser
     @cat_consistency_mysql.add_a_check @cat_vagrant_mysql_username
     @cat_consistency_mysql.add_a_check @cat_vagrant_mysql_passwords
 
-    @cat_consistency_url.add_a_check @cat_consistency_url_management
-    @cat_consistency_url.add_a_check @cat_consistency_url_targeting
-    @cat_consistency_url.add_a_check @cat_consistency_url_dealkeeper
-    @cat_consistency_url.add_a_check @cat_consistency_url_integratio
-    @cat_consistency_url.add_a_check @cat_consistency_url_bannerserv
-    @cat_consistency_url.add_a_check @cat_consistency_url_imageserv
-    @cat_consistency_url.add_a_check @cat_consistency_url_reporting
-    @cat_consistency_url.add_a_check @cat_consistency_url_analytics
-    @cat_consistency_url.add_a_check @cat_consistency_url_feedback
-    @cat_consistency_url.add_a_check @cat_consistency_url_banner
-    @cat_consistency_url.add_a_check @cat_consistency_url_frontend
+    #@cat_consistency_url.add_a_check @cat_consistency_url_management
+    #@cat_consistency_url.add_a_check @cat_consistency_url_targeting
+    #@cat_consistency_url.add_a_check @cat_consistency_url_dealkeeper
+    #@cat_consistency_url.add_a_check @cat_consistency_url_integratio
+    #@cat_consistency_url.add_a_check @cat_consistency_url_bannerserv
+    #@cat_consistency_url.add_a_check @cat_consistency_url_imageserv
+    #@cat_consistency_url.add_a_check @cat_consistency_url_reporting
+    #@cat_consistency_url.add_a_check @cat_consistency_url_analytics
+    #@cat_consistency_url.add_a_check @cat_consistency_url_feedback
+    #@cat_consistency_url.add_a_check @cat_consistency_url_banner
+    #@cat_consistency_url.add_a_check @cat_consistency_url_frontend
 
 
 
@@ -63,47 +65,74 @@ class Yaml_parser
 
     # we can guess the path to the other project
     # so we can found the yaml
+    #@all_projects.each{ |project|
+    #  #adding the standard application.yml file (dealkeeper.yml for the dealkeeper project)
+    #  yaml_file=nil
+    #  if project[0] != "dealkeeper_path"
+    #    yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/application.yml")
+    #  else
+    #    yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/dealkeeper.yml")
+    #  end
+    #
+    #  project_yaml = Settingslogic.new(yaml_file)
+    #
+    #
+    #  complex_settings = []
+    #  complex_settings_tmp = []
+    #  project_yaml.vagrant.each{ |t|
+    #  #  puts "GOT="+ uncomplex_settings([t]).inspect
+    #      complex_settings_tmp = uncomplex_settings([t])
+    #    #  puts "GOT="+ complex_settings_tmp.inspect
+    #    complex_settings_tmp.each{|neo_settings|
+    #      complex_settings <<  neo_settings
+    #    }
+    #  }
+    #
+    #  complex_settings.each{ |t|
+    #    find_rules(project[0], t, yaml_file)
+    #  }
+    #
+    #  #adding the database.yml for the project that need it
+    #  yaml_file=nil
+    #  if project[0] == "management_path" || project[0] == "feedback_path"
+    #    yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/database.yml")
+    #  end
+    #
+    #  if yaml_file != nil
+    #    project_yaml = Settingslogic.new(yaml_file)
+    #    project_yaml.vagrant.each{ |t|
+    #      find_rules(project[0], t, yaml_file)
+    #    }
+    #  end
+    #}
+    #create_rules_cross_project
+
+
+
+    #  if project[0] != "dealkeeper_path"
+    #    yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/application.yml")
+    #  else
+    #    yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/dealkeeper.yml")
+    #  end
+
     @all_projects.each{ |project|
-      #adding the standard application.yml file (dealkeeper.yml for the dealkeeper project)
-      yaml_file=nil
-      if project[0] != "dealkeeper_path"
-        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/application.yml")
-      else
-        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/dealkeeper.yml")
-      end
+      name = project[0]
 
-      project_yaml = Settingslogic.new(yaml_file)
+        if project[0] != "dealkeeper_path"
+          url = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/application.yml")
+        else
+          url = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/dealkeeper.yml")
+        end
 
-
-      complex_settings = []
-      complex_settings_tmp = []
-      project_yaml.vagrant.each{ |t|
-      #  puts "GOT="+ uncomplex_settings([t]).inspect
-          complex_settings_tmp = uncomplex_settings([t])
-        #  puts "GOT="+ complex_settings_tmp.inspect
-        complex_settings_tmp.each{|neo_settings|
-          complex_settings <<  neo_settings
-        }
+       #puts @cat_consistency_url.inspect
+      yaml = Yaml_abstract.new name, url, @cat_consistency_url
+      #yaml.update_self
+      @all_yaml << yaml
       }
 
-      complex_settings.each{ |t|
-        find_rules(project[0], t, yaml_file)
+    @all_yaml.each{ |project|
+      project.run
       }
-
-      #adding the database.yml for the project that need it
-      yaml_file=nil
-      if project[0] == "management_path" || project[0] == "feedback_path"
-        yaml_file = File.expand_path(File.expand_path(File.dirname(__FILE__) +"/../../../.." +project[1])+ "/config/database.yml")
-      end
-
-      if yaml_file != nil
-        project_yaml = Settingslogic.new(yaml_file)
-        project_yaml.vagrant.each{ |t|
-          find_rules(project[0], t, yaml_file)
-        }
-      end
-    }
-    create_rules_cross_project
 
   end
 
@@ -173,6 +202,7 @@ class Yaml_parser
       #end
   end
 
+  # TODO REMOVE
   def find_rules_cross_projects_passwords rules, yaml_path
     if yaml_path =~ /database.yml$/
       if rules[0] == "username"
@@ -203,6 +233,7 @@ class Yaml_parser
 
   end
 
+  # TODO REMOVE
   def create_rules_cross_project
     @mysql_username.each_index{ |i|
       if i < @mysql_username.size-1
@@ -248,6 +279,7 @@ class Yaml_parser
     @cat_consistency.print_non_check
   end
 
+  #TODO remove me
   def uncomplex_settings settings
     res=nil
     neo_settings = settings

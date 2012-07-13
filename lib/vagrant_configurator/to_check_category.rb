@@ -11,7 +11,7 @@ class To_check_category
     if father_cat == nil
       @deep_cat=0
     else
-      @deep_cat=father_cat.to_check_Or_category.size+1
+      @deep_cat=father_cat.deep_cat+1
     end
 
     @id = IdFactory.create father_cat
