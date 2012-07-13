@@ -73,12 +73,16 @@ module VagrantTest
   end
 
   module DSL
+    include Process
     def vagrant_test
       environment = EnvironmentConfiguration.new
       yield environment
 
       EnvironmentGenerator.generate(environment)
-      environment.vms.each { |vm| vm.up}
+      processes = []
+      environment.vms.each { |vm| processes << Process.fork{vm.up}}
+      processes.each {|id| Process.waitpid(id , 0)}
+
       environment.vms.map(&:services).flatten.each do |service|
         #Process.fork {
           service.rails_env = environment.rails_env
@@ -87,12 +91,14 @@ module VagrantTest
       end
 
       #Process.waitall
+      exit_state = 0
       environment.spec_path.each do |spec|
-        environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "} bundle exec rspec #{spec} --color #{'--format '<< environment.format unless environment.format.eql? " "}") unless environment.test_service == nil
+        exit_state = environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "} bundle exec rspec #{spec} --color #{'--format '<< environment.format unless environment.format.eql? " "}") unless environment.test_service == nil
       end
       #environment.vms.each { |vm| vm.destroy }
       #EnvironmentGenerator.delete_ips
       environment.vms.each { |vm| vm.halt}
+      return exit_state
     end
 
   end

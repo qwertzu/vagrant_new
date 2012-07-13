@@ -58,32 +58,28 @@ module VagrantTest
 
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
-      message = ""
+      exit_state = 0
       begin
         vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
           print "#{data}"
-          message = data
         end
       rescue
         puts 'Caught an EXCEPTION'
-        message = nil
       end
-      message
+      exit_state
     end
 
     def sudo(cmd)
       puts "#{vm.name}: Sudo #{cmd}"
-      message = ""
+      exit_state = 0
       begin
         vm.channel.sudo("#{cmd}") do |output,data|
           print "#{data}"
-          message = data
         end
       rescue
         puts 'Caught an EXCEPTION'
-        message = nil
       end
-      message
+      exit_state
     end
 
     def add service_clazz
