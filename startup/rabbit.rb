@@ -4,6 +4,9 @@ class Rabbit < VagrantTest::Service
 
   class << self
 
+    def init
+    end
+
     def run
       sudo('/etc/init.d/rabbitmq-server stop')
       sudo('/etc/init.d/rabbitmq-server start')
@@ -19,7 +22,7 @@ class Rabbit < VagrantTest::Service
 
     def stop
       #TODO implement me!
-      sudo('/etc/init.d/rabbitmq-server stop')
+    #  sudo('/etc/init.d/rabbitmq-server stop')
     end
 
   end

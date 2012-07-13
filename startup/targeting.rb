@@ -4,10 +4,14 @@ class Targeting < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
-      exec_home("bundle install")
+      exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/redis.yml.example config/redis.yml')
@@ -16,7 +20,6 @@ class Targeting < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      #sudo('service apache2 stop')
 
       # starting the server / service
       exec_home("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &> /dev/null")
