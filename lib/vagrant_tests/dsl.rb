@@ -98,10 +98,10 @@ module VagrantTest
           before_command="xvfb-run"
         end
 
-        environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        res = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        puts "EXIT_STATUS="+res.inspect
       end
-      #environment.vms.each { |vm| vm.destroy }
-      #EnvironmentGenerator.delete_ips
+
     end
 
   end

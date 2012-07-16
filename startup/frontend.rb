@@ -23,7 +23,7 @@ class Frontend < VagrantTest::Service
       # starting server
       #exec_home_non_blocking("RACK_ENV=#{rails_env} rack server") # TODO ACHTUNG port?
       #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant" ')          # TODO start rake server instead!
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rake server' --chdir=/vagrant/#{@name} --env='RAILS_ENV=@{rail_env}' --errlog=/vagrant/#{@name}-log-err --dbglog=/vagrant/#{@name}-log-log2 --output= vagrant/#{@name}-out --stdout=/vagrant/#{@name}-out2 --stderr=/vagrant/#{@name}-err")
+      exec_home("daemon -X 'RACK_ENV=#{rails_env} rake server' --chdir=/vagrant/#{self.name} --env='RAILS_ENV=#{rail_env}' --errlog=/vagrant/#{self.name}-log-err --dbglog=/vagrant/#{self.name}-log-log2 --output= vagrant/#{self.name}-out --stdout=/vagrant/#{self.name}-out2 --stderr=/vagrant/#{self.name}-err")
       #RACK_ENV=integration rake server
     end
 

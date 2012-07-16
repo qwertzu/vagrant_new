@@ -8,6 +8,10 @@ class Feedback < VagrantTest::Service
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
+
+      sudo("service mysql start")
+      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database dealomio_feedback_api_vagrant"')
+      sudo("service mysql stop")
     end
 
     def run
@@ -16,8 +20,8 @@ class Feedback < VagrantTest::Service
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      # creating the database
-      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database dealomio_feedback_api_vagrant"')
+      # updating database
+      sudo("service mysql start")
       exec_home("RAILS_ENV=#{rails_env} rake db:migrate")     #TODO CHECK
 
 
@@ -27,7 +31,7 @@ class Feedback < VagrantTest::Service
       # rackup -p 3003
       #sudo("service apache2 stop")
 
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]}' --chdir=/vagrant/#{@name} --env='RACK_ENV=@{rail_env}' --errlog=/vagrant/#{@name}-log-err --dbglog=/vagrant/#{@name}-log-log2 --output= vagrant/#{@name}-out --stdout=/vagrant/#{@name}-out2 --stderr=/vagrant/#{@name}-err")
+      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]}' --chdir=/vagrant/#{self.name} --env='RACK_ENV=#{rails_env}' --errlog=/vagrant/#{self.name}-log-err --dbglog=/vagrant/#{self.name}-log-log2 --output= vagrant/#{self.name}-out --stdout=/vagrant/#{self.name}-out2 --stderr=/vagrant/#{self.name}-err")
 
       #exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger -p 80  -d --user vagrant -e vagrant &> /dev/null")
 

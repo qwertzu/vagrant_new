@@ -21,7 +21,7 @@ class Reporting < VagrantTest::Service
       exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
 
       # starting/stoping server services
-      sudo("ps -edf | grep couch | grep -v grep| tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")   # kill the process that is busying the port :5984
+      #sudo("ps -edf | grep couch | grep -v grep| tr -s ' '| cut -d' ' -f 2")   # kill the process that is busying the port :5984 TODO  useless?
       sudo('service couchdb start')
 
       exec_home_non_blocking("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &>/dev/null")
