@@ -24,18 +24,8 @@ class Feedback < VagrantTest::Service
       sudo("service mysql start")
       exec_home("RAILS_ENV=#{rails_env} rake db:migrate")     #TODO CHECK
 
-
       # starting server
-      #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup -p 80 --user vagrant -e vagrant")            # TODO neue / port
-
-      # rackup -p 3003
-      #sudo("service apache2 stop")
-
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]}' --chdir=/vagrant/#{self.name} --env='RACK_ENV=#{rails_env}' --errlog=/vagrant/#{self.name}-log-err --dbglog=/vagrant/#{self.name}-log-log2 --output= vagrant/#{self.name}-out --stdout=/vagrant/#{self.name}-out2 --stderr=/vagrant/#{self.name}-err")
-
-      #exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger -p 80  -d --user vagrant -e vagrant &> /dev/null")
-
-
+      exec_home("RACK_ENV=#{rails_env} rackup -p #{ports[1]} -D")
     end
 
     def code_directory
@@ -47,7 +37,8 @@ class Feedback < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo("service mysql stop")
+      sudo("ps -ef |grep rackup |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end
