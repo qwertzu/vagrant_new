@@ -34,9 +34,6 @@ vagrant_test do |env|
   frontend = env.add_vm(:frontend)
   frontend.add Frontend
 
-  rep = env.add_vm(:reporting) # TODO to remove
-  rep.add Reporting
-
   env.test_service = Integration
   env.rails_env = "vagrant"
   env.spec_path= ['spec/frontend']
