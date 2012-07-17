@@ -47,7 +47,13 @@ class Management < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      # stoping services
+      sudo('/etc/init.d/mysql stop')
+      sudo('/etc/init.d/redis-server stop')
+
+      # starting server
+      exec_home("rvmsudo passenger stop -p#{ports[0]}")
+
     end
 
   end
