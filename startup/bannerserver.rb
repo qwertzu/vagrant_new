@@ -39,8 +39,10 @@ class Bannerserver < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
-
+      sudo('/etc/init.d/redis-server stop')
+      exec_home_non_blocking("rvmsudo passenger stop -p#{ports[1]}")
+      exec_home("rvmsudo thin stop -p#{ports[0]}")
+      exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon stop")
     end
 
   end
