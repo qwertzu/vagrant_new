@@ -59,8 +59,10 @@ module VagrantTest
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
       message = ""
+      exit_status2=""
       begin
-        vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
+        exit_status=vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
+          exit_status2=output
           print "#{data}"
           message = data
         end
@@ -68,7 +70,7 @@ module VagrantTest
         puts 'Caught an EXCEPTION'
         message = nil
       end
-      message
+      exit_status
     end
 
     def sudo(cmd)
@@ -105,31 +107,27 @@ module VagrantTest
       puts "Finished running #{vm.name}:-halt"
     end
 
-    def up
-      destroy if vm.state == :running
-      unless vm.state == :running
+    def up environment = nil
+      if vm.state == :running
+        puts "About to stop services of #{vm.name}:-rerun..."
+        # destroy
+         @services.flatten.each do |service|
+          service.rails_env = environment.rails_env
+          service.stop
+        end
+        # stop
+        puts "Finished to stop services of #{vm.name}:-rerun..."
+      else
         puts "About to run #{vm.name}:-up..."
         VagrantTest::Lock.sync { vm.up }
         puts "Finished running #{vm.name}:-up"
-      end
-      puts "Copy config files TODO TO REMOVE"
-      sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
-
-
-      self.services.each do |service|
-        service.exec_home("gem install bundler")     # TODO REMOVE
-        service.exec_home("bundle")                 # TODO: install the longer and mostly used gem
-        #service.exec_home("gem install passenger --no-rdoc --no-ri") # TODO install a global passenger, so that it will be really quicker to boot
-
-        #begin
-        #  ruby_version = service.exec_home('rvm current').chomp
-        #  passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
-        #  puts passenger_version
-        #  raise() if !passenger_version
-        #  puts("#{service.name} runs with local gemset passenger")
-        #rescue
-        #  puts("#{service.name} runs with global passenger")
-        #end
+        puts "Copy config files"
+        sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
+        self.services.each do |service|
+          service.exec_home("gem install bundler")    # TODO REMOVE
+          service.exec_home("bundle")                 # TODO: install the bigger and mostly used gem in the script for the basebox creation
+                                                      #service.exec_home("gem install passenger --no-rdoc --no-ri") # TODO install a global passenger in script, so that it will be really quicker to boot
+        end
       end
     end
 
