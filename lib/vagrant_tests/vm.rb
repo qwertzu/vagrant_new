@@ -59,14 +59,22 @@ module VagrantTest
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
       message = ""
-      exit_status2=""
+      exit_status=42
       begin
-        exit_status=vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
-          exit_status2=output
+        vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
           print "#{data}"
           message = data
+          if data.match /examples, 0 failure/
+            exit_status=0
+          elsif  data.match /examples, .* failure/
+            exit_status=1
+          end
         end
-      rescue
+      rescue => e
+        if cmd.match /rspec/
+          puts e.inspect
+          exit_status = 1
+        end
         puts 'Caught an EXCEPTION'
         message = nil
       end

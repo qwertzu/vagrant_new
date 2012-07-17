@@ -23,7 +23,8 @@ module VagrantTest
       end
 
       def exec_home cmd
-        vm.exec(cmd , "/vagrant/" + self.name)
+        exit_status = vm.exec(cmd , "/vagrant/" + self.name)
+        exit_status
       end
 
       # TODO  - sich versichern, dass die ouput auf dem Console geschrieben wird
@@ -101,7 +102,12 @@ module VagrantTest
         end
 
         res = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        exit res
       end
+
+    end
+
+    def dealkeeper_up
 
     end
 
