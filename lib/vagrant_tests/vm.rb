@@ -110,12 +110,10 @@ module VagrantTest
     def up environment = nil
       if vm.state == :running
         puts "About to stop services of #{vm.name}:-rerun..."
-        # destroy
          @services.flatten.each do |service|
           service.rails_env = environment.rails_env
           service.stop
         end
-        # stop
         puts "Finished to stop services of #{vm.name}:-rerun..."
       else
         puts "About to run #{vm.name}:-up..."
@@ -124,9 +122,8 @@ module VagrantTest
         puts "Copy config files"
         sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
         self.services.each do |service|
-          service.exec_home("gem install bundler")    # TODO REMOVE
-          service.exec_home("bundle")                 # TODO: install the bigger and mostly used gem in the script for the basebox creation
-                                                      #service.exec_home("gem install passenger --no-rdoc --no-ri") # TODO install a global passenger in script, so that it will be really quicker to boot
+          service.exec_home("gem install bundler")
+          service.exec_home("bundle")
         end
       end
     end
