@@ -16,15 +16,11 @@ class Frontend < VagrantTest::Service
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      # starting/stoping services
+      # starting service
       sudo('/etc/init.d/redis-server start')
-      #sudo('/etc/init.d/apache2 stop')
 
       # starting server
-      #exec_home_non_blocking("RACK_ENV=#{rails_env} rack server") # TODO ACHTUNG port?
-      #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant" ')          # TODO start rake server instead!
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rake server' --chdir=/vagrant/#{self.name} --env='RAILS_ENV=#{rail_env}' --errlog=/vagrant/#{self.name}-log-err --dbglog=/vagrant/#{self.name}-log-log2 --output= vagrant/#{self.name}-out --stdout=/vagrant/#{self.name}-out2 --stderr=/vagrant/#{self.name}-err")
-      #RACK_ENV=integration rake server
+      exec_home("RACK_ENV=#{rails_env} rake server &> /dev/null")
     end
 
     def code_directory
@@ -36,7 +32,8 @@ class Frontend < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo('service redis-server stop')
+      sudo("ps -ef |grep middleman |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end
