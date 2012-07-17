@@ -73,33 +73,34 @@ module VagrantTest
   end
 
   module DSL
+
+    # Performs the tests
     def vagrant_test
+      # create the environment and the VMs
       environment = EnvironmentConfiguration.new
       yield environment
 
       EnvironmentGenerator.generate(environment)
-      environment.vms.each { |vm| vm.up}
+      environment.vms.each { |vm| vm.up environment}
+
       environment.vms.map(&:services).flatten.each do |service|
-        #Process.fork {
-          service.rails_env = environment.rails_env
-          service.run
-        #}
+        service.rails_env = environment.rails_env
+        service.run
       end
 
-      #Process.waitall
+      # Perform the tests for each path
+      # First set some variable, to make the bash executed command different according to the test
       environment.spec_path.each do |spec|
         env_variables= "RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "}"
+        before_command=""
+        after_command=""
         options=""
         #options = "--color #{'--format '<< environment.format unless environment.format.eql? " "}" #TODO-test
-
-        after_command=""
-        before_command=""
         if spec =~ /frontend/
           before_command="xvfb-run"
         end
 
         res = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
-        puts "EXIT_STATUS="+res.inspect
       end
 
     end
@@ -107,18 +108,3 @@ module VagrantTest
   end
 
 end
-
-#
-# vagrant_test do |env|
-#    man = env.add_vm(name, base_box)
-#    man.add Management
-#
-#    env.add_vm do |vm|
-#      vm.add Targeting
-#      vm.add Dealkeeper
-#    end
-#   env.rspec '../path_to_spec/'
-#   env.test_vm man
-# end
-
-
