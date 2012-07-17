@@ -29,7 +29,8 @@ class Dealkeeper < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      exec_home("rm dealkeeper_daemon_vagrant*.pid")
+      exec_home("ps -edf | grep dealkeeper | grep -v grep | tr -s ' '| cut -d ' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end
