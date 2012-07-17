@@ -13,15 +13,12 @@ class Reporting < VagrantTest::Service
     def run
       init #TODO remove when init-start-stop funktioniert
 
-      #sudo('apt-get install -y couchdb libcouchdb-glib-1.0-2 python-couchdb gir1.2-couchdb-1.0 couchdb-bin --force-yes')    # TODO verschoben nach script 5/07/2012 nach script
-
       # copying configuration files
       exec_home('cp -v config/couchdb.yml.example config/couchdb.yml')
       exec_home('cp -v config/application.yml.example config/application.yml')
       exec_home('cp -v config/logcaster.yml.example config/logcaster.yml')
 
       # starting/stoping server services
-      #sudo("ps -edf | grep couch | grep -v grep| tr -s ' '| cut -d' ' -f 2")   # kill the process that is busying the port :5984 TODO  useless?
       sudo('service couchdb start')
 
       exec_home_non_blocking("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &>/dev/null")
@@ -41,7 +38,14 @@ class Reporting < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo('service couchdb stop')
+
+      exec_home_non_blocking("rvmsudo passenger stop -p#{ports[0]}")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb stop -p 3001")
+
+      # stoping the daemons
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/logging.rb stop")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/report.rb stop")
     end
 
   end
