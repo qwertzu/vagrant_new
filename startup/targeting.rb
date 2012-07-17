@@ -39,7 +39,17 @@ class Targeting < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      # starting/stoping services
+      sudo('/etc/init.d/redis-server stop')
+
+      # starting the server / service
+      exec_home("rvmsudo passenger stop -p#{ports[0]}")
+      # exec_home("RAILS_ENV=#{rails_env} rvmsudo ruby dealomio_targeting.rb -p #{ports[1]} &")
+      # TODO kill dealomio_targeting.rb
+
+      # starting the daemons
+      exec_home("RAILS_ENV=#{rails_env} ruby script/targeting_publisher_consumer_daemon stop")
+      exec_home("RAILS_ENV=#{rails_env} ruby script/targeting_adspace_consumer_daemon stop")
     end
 
   end
