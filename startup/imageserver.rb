@@ -40,7 +40,12 @@ class Imageserver < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      exec_home("ps -edf | grep Xvfb | grep -v grep | tr -s ' '| cut -d ' ' -f 2 | xargs -n 1 sudo kill -9")
+      sudo('/etc/init.d/redis-server stop')
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger stop -p#{ports[0]}")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/deal_consumer_daemon stop")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/detail_picture_consumer_daemon stop")
+      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby script/picture_consumer_daemon stop")
     end
 
   end
