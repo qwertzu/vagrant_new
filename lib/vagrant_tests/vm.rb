@@ -58,12 +58,10 @@ module VagrantTest
 
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
-      message = ""
       exit_status=42
       begin
         vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
           print "#{data}"
-          message = data
           if data.match /examples, 0 failure/
             exit_status=0
           elsif  data.match /examples, .* failure/
@@ -80,25 +78,22 @@ module VagrantTest
         else
           exit_status = 11
           puts 'Caught an EXCEPTION'
-          message = nil
-        end
+         end
       end
       exit_status
     end
 
     def sudo(cmd)
       puts "#{vm.name}: Sudo #{cmd}"
-      message = ""
+      exit_state = 0
       begin
         vm.channel.sudo("#{cmd}") do |output,data|
           print "#{data}"
-          message = data
         end
       rescue
         puts 'Caught an EXCEPTION'
-        message = nil
       end
-      message
+      exit_state
     end
 
     def add service_clazz
@@ -114,7 +109,7 @@ module VagrantTest
 
     def halt
       raise "Must run `vagrant up`" if !vm.created?
-      raise "Must be running!" if vm.state != :running
+      raise "Must be running!" if vm.state != (:running || :saved)
       puts "About to run #{vm.name}:-halt..."
       vm.halt
       puts "Finished running #{vm.name}:-halt"
@@ -129,6 +124,10 @@ module VagrantTest
         end
         puts "Finished to stop services of #{vm.name}:-rerun..."
       else
+    #def up
+     # puts vm.state
+      #halt if vm.state == (:running || :saved)
+    #  unless vm.state == :running
         puts "About to run #{vm.name}:-up..."
         VagrantTest::Lock.sync { vm.up }
         puts "Finished running #{vm.name}:-up"
@@ -139,6 +138,8 @@ module VagrantTest
           service.exec_home("bundle")
         end
       end
+     # end
+
     end
 
     def reload

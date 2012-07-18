@@ -1,19 +1,20 @@
 vagrant:
   lock_file: '/tmp/vagrant_tests.lock'
-  base_box: servtag-test17
+  base_box: dealomio-test16
   hosts_file: './hosts'
   vagrant_file: './Vagrantfile'
   ip_mem: './../../ip_mem'
-  management_path: './../dealomio_management_api'
-  targeting_path: './../dealomio_targeting_api'
-  dealkeeper_path: './../dealomio_dealkeeper'
-  integration_path: './../dealomio_integration_test'
-  bannerserver_path: './../dealomio_bannerserver'
-  imageserver_path: './../dealomio_imageserver'
-  reporting_path: './../dealomio_reporting_api'
-  analytics_path: './../dealomio_analytics_api'
-  feedback_path: './../dealomio_feedback_api'
-  banner_path: './../dealomio_banner'
-  frontend_path: './../dealomio_frontend'
+  management_path: './dealomio_management_api'
+  targeting_path: './dealomio_targeting_api'
+  dealkeeper_path: './dealomio_dealkeeper'
+  integration_path: './dealomio_integration_test'
+  bannerserver_path: './dealomio_bannerserver'
+  imageserver_path: './dealomio_imageserver'
+  reporting_path: './dealomio_reporting_api'
+  analytics_path: './dealomio_analytics_api'
+  feedback_path: './dealomio_feedback_api'
+  banner_path: './dealomio_banner'
+  frontend_path: './dealomio_frontend'
   mysql_username: root
   mysql_password: root
+

@@ -15,6 +15,7 @@ echo "deb-src http://www.apache.org/dist/cassandra/debian 08x main" >> /etc/apt/
 # Installing new SOFTWARES and necessary servers
 apt-get -y update
 apt-get -y upgrade
+
 apt-get install -y libreadline-dev
 apt-get install -y libxml2 libxml2-dev
 apt-get install -y apache2-mpm-prefork apache2-prefork-dev libcurl4-openssl-dev libapr1-dev libaprutil1-dev #für phusion passenger
@@ -42,6 +43,7 @@ echo "mysql-server-5.1 mysql-server/root_password password vagrant" > mysql.pres
 echo "mysql-server-5.1 mysql-server/root_password_again password vagrant" >> mysql.preseed
 echo "mysql-server-5.1 mysql-server/start_on_boot boolean true" >> mysql.preseed
 cat mysql.preseed | sudo debconf-set-selections
+
 apt-get install -y mysql-server
 apt-get install -y mysql-client mysql-common mysql-server
 
@@ -70,6 +72,7 @@ sudo adduser root rvm
 apt-get install -y libqt4-dev libqtwebkit-dev xvfb daemon --force-yes # needed fom gem capybara-webkit
 apt-get install -y libmysql-ruby # needed from gem mysql2
 apt-get install -y libmagick9-dev # needed from gem rmagick
+
 
 #node.js
 su vagrant -l -c "git clone git://github.com/joyent/node.git"

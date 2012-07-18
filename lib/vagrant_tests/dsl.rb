@@ -74,6 +74,7 @@ module VagrantTest
   end
 
   module DSL
+    include Process
 
     # Performs the tests
     def vagrant_test
@@ -82,7 +83,9 @@ module VagrantTest
       yield environment
 
       EnvironmentGenerator.generate(environment)
+      processes = []
       environment.vms.each { |vm| vm.up environment}
+
 
       environment.vms.map(&:services).flatten.each do |service|
         service.rails_env = environment.rails_env
@@ -91,18 +94,18 @@ module VagrantTest
 
       # Perform the tests for each path
       # First set some variable, to make the bash executed command different according to the test
+      exit_state = 0
       environment.spec_path.each do |spec|
         env_variables= "RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "}"
         before_command=""
         after_command=""
-        options=""
-        #options = "--color #{'--format '<< environment.format unless environment.format.eql? " "}" #TODO-test
+        options = "--color #{'--format '<< environment.format unless environment.format.eql? ' '}" #TODO-test
         if spec =~ /frontend/
           before_command="xvfb-run"
         end
 
-        res = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
-        exit res
+        exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        return exit_state
       end
 
     end

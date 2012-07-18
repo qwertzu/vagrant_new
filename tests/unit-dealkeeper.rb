@@ -9,4 +9,6 @@ vagrant_test do |env|
   env.test_service = Dealkeeper
   env.rails_env = "vagrant"
   env.spec_path= ['spec/']
+  env.ci_rep = "./../reports"
+  env.format = "CI::Reporter::RSpec"
 end
