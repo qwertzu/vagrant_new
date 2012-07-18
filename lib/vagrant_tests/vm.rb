@@ -58,15 +58,29 @@ module VagrantTest
 
     def exec(cmd, dir = '/')
       puts "#{vm.name}: Execute #{cmd}"
-      exit_state = 0
+      exit_status=42
       begin
         vm.channel.execute("cd #{dir} && " + cmd) do |output,data|
           print "#{data}"
+          if data.match /examples, 0 failure/
+            exit_status=0
+          elsif  data.match /examples, .* failure/
+            exit_status=1
+          else
+            exit_status=2
+          end
         end
-      rescue
-        puts 'Caught an EXCEPTION'
+      rescue => e
+        if cmd.match /rspec/
+          #  if tests fail, we become an exception:
+          # #<Vagrant::Errors::VagrantError: The following SSH command responded with a non-zero exit status.
+          exit_status = 10
+        else
+          exit_status = 11
+          puts 'Caught an EXCEPTION'
+         end
       end
-      exit_state
+      exit_status
     end
 
     def sudo(cmd)
@@ -102,37 +116,37 @@ module VagrantTest
     end
 
     def up
-      puts vm.state
-      halt if vm.state == (:running || :saved)
-      unless vm.state == :running
-        puts "About to run #{vm.name}:-up..."
+      if vm.state == :running || vm.state == :suspend
+        puts "About to stop VM #{vm.name} for reboot..."
+        vm.halt
+      elsif vm.state == :saved
+        puts "About to boot VM #{vm.name}..."
+        vm.start
+      else
+        puts "About to import VM #{vm.name} for boot (this can take a few minutes)..."
         VagrantTest::Lock.sync { vm.up }
-        puts "Finished running #{vm.name}:-up"
       end
+
+      puts "Finished running #{vm.name}:-up"
       puts "Copy config files"
       sudo("cp /vagrant/#{Settings.hosts_file} /etc/hosts")
-
-      #sudo("cd /etc/apache2/sites-enabled && a2dissite *")
-      #sudo("cd /etc/apache2/sites-enabled && a2enmod rewrite")
       self.services.each do |service|
-        #sudo("cp /vagrant/apache-conf/sites-available/#{service.name}.conf /etc/apache2/sites-available/.")
-        #sudo("cd /etc/apache2/sites-enabled && a2ensite #{service.name}.conf")
         service.exec_home("gem install bundler")
         service.exec_home("bundle")
-        service.exec_home("gem install passenger")
-        #begin
-        #  ruby_version = service.exec_home('rvm current').chomp
-        #  passenger_version = service.exec_home('bundle show | grep passenger').match('\d+.\d+.\d+')[0]
-        #  puts passenger_version
-        #  raise() if !passenger_version
-        #  puts("#{service.name} runs with local gemset passenger")
-        #rescue
-        #  puts("#{service.name} runs with global passenger")
-        #end
       end
-      #puts "enabled apache files"
     end
 
+=begin
+        def up environment = nil
+           if vm.state == :running
+        puts "About to stop services of #{vm.name}:-rerun..."
+         @services.flatten.each do |service|
+          service.rails_env = environment.rails_env
+          service.stop
+        end
+        puts "Finished to stop services of #{vm.name}:-rerun..."
+      end
+=end
     def reload
       VagrantTest::Lock.sync { vm.reload }
     end

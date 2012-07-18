@@ -4,30 +4,28 @@ class Feedback < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
 
+      sudo("service mysql start")
+      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database dealomio_feedback_api_vagrant"')
+      sudo("service mysql stop")
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
+
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      # creating the database
-      exec_home('mysql -u'+Settings.mysql_username+' -p'+Settings.mysql_password+' -e "create database dealomio_feedback_api_vagrant"')
+      # updating database
+      sudo("service mysql start")
       exec_home("RAILS_ENV=#{rails_env} rake db:migrate")     #TODO CHECK
 
-
       # starting server
-      #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup -p 80 --user vagrant -e vagrant")            # TODO neue / port
-
-      # rackup -p 3003
-      #sudo("service apache2 stop")
-
-      exec_home("daemon -X 'RACK_ENV=#{rails_env} rackup -p #{ports[1]} > /vagrant/feedback/log-feed'")
-
-      #exec_home_non_blocking("RAILS_ENV=#{rails_env} rvmsudo passenger -p 80  -d --user vagrant -e vagrant &> /dev/null")
-
-
+      exec_home("RACK_ENV=#{rails_env} rackup -p #{ports[1]} -D")
     end
 
     def code_directory
@@ -39,7 +37,8 @@ class Feedback < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo("service mysql stop")
+      sudo("ps -ef |grep rackup |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end

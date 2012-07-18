@@ -4,10 +4,14 @@ class Targeting < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
-      exec_home("bundle install")
+      exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/redis.yml.example config/redis.yml')
@@ -16,7 +20,6 @@ class Targeting < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      #sudo('service apache2 stop')
 
       # starting the server / service
       exec_home("rvmsudo passenger start -p#{ports[0]} -d --user vagrant -e #{rails_env} &> /dev/null")
@@ -36,7 +39,17 @@ class Targeting < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      # starting/stoping services
+      sudo('/etc/init.d/redis-server stop')
+
+      # starting the server / service
+      exec_home("rvmsudo passenger stop -p#{ports[0]}")
+      # exec_home("RAILS_ENV=#{rails_env} rvmsudo ruby dealomio_targeting.rb -p #{ports[1]} &")
+      # TODO kill dealomio_targeting.rb
+
+      # starting the daemons
+      exec_home("RAILS_ENV=#{rails_env} ruby script/targeting_publisher_consumer_daemon stop")
+      exec_home("RAILS_ENV=#{rails_env} ruby script/targeting_adspace_consumer_daemon stop")
     end
 
   end

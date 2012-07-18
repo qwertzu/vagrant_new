@@ -34,10 +34,13 @@ vagrant_test do |env|
   frontend = env.add_vm(:frontend)
   frontend.add Frontend
 
+  rep = env.add_vm(:reporting)
+  rep.add Reporting
+
+  #geo_db = env.add_vm(:maxmind_geo_db)
+  #geo_db.add Maxmind_geo_db
+
   env.test_service = Integration
   env.rails_env = "vagrant"
-  env.spec_path= ['spec/frontend']
-  env.ci_rep = "./../reports"
-  env.format = "CI::Reporter::RSpec"
-
+  env.spec_path= ['spec/basics']
 end

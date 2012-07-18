@@ -4,10 +4,14 @@ class Dealkeeper < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/dealkeeper.yml.example config/dealkeeper.yml')
@@ -25,7 +29,8 @@ class Dealkeeper < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      exec_home("rm dealkeeper_daemon_vagrant*.pid")
+      exec_home("ps -edf | grep dealkeeper | grep -v grep | tr -s ' '| cut -d ' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end

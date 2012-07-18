@@ -4,23 +4,23 @@ class Frontend < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      # starting/stoping services
+      # starting service
       sudo('/etc/init.d/redis-server start')
-      #sudo('/etc/init.d/apache2 stop')
 
       # starting server
-      #exec_home_non_blocking("RACK_ENV=#{rails_env} rack server") # TODO ACHTUNG port?
-      #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant" ')          # TODO start rake server instead!
-      exec_home("daemon -X 'cd /vagrant/frontend && RACK_ENV=#{rails_env} rake server ' > /vagrant/frontend/log-front")
-      #RACK_ENV=integration rake server
+      exec_home("RACK_ENV=#{rails_env} rake server &> /dev/null")
     end
 
     def code_directory
@@ -32,7 +32,8 @@ class Frontend < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo('service redis-server stop')
+      sudo("ps -ef |grep middleman |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end

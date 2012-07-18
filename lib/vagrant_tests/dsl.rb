@@ -23,7 +23,8 @@ module VagrantTest
       end
 
       def exec_home cmd
-        vm.exec(cmd , "/vagrant/" + self.name)
+        exit_status = vm.exec(cmd , "/vagrant/" + self.name)
+        exit_status
       end
 
       # TODO  - sich versichern, dass die ouput auf dem Console geschrieben wird
@@ -74,48 +75,47 @@ module VagrantTest
 
   module DSL
     include Process
+
+    # Performs the tests
     def vagrant_test
+      # create the environment and the VMs
       environment = EnvironmentConfiguration.new
       yield environment
 
       EnvironmentGenerator.generate(environment)
+
       processes = []
-      environment.vms.each { |vm| processes << fork{vm.up}}
-      processes.each  { |process| waitpid(process)}
+      environment.vms.each { |vm| processes << Process.fork{vm.up}}
+      processes.each {|process| Process.waitpid(process)}
 
       environment.vms.map(&:services).flatten.each do |service|
-        #Process.fork {
-          service.rails_env = environment.rails_env
-          service.run
-        #}
+        service.rails_env = environment.rails_env
+        service.run
       end
 
-      #Process.waitall
+      # Perform the tests for each path
+      # First set some variable, to make the bash executed command different according to the test
       exit_state = 0
       environment.spec_path.each do |spec|
-        exit_state = environment.test_service.exec_home("RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "} bundle exec rspec #{spec} --color #{'--format '<< environment.format unless environment.format.eql? " "}") unless environment.test_service == nil
+        env_variables= "RAILS_ENV=#{environment.rails_env} #{'CI_REPORTS=' << environment.ci_rep unless environment.ci_rep.eql? " "}"
+        before_command=""
+        after_command=""
+        options = "--color #{'--format '<< environment.format unless environment.format.eql? ' '}" #TODO-test
+        if spec =~ /frontend/
+          before_command="xvfb-run"
+        end
+
+        exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        environment.vms.each { |vm| vm.halt}
+        return exit_state
       end
-      #environment.vms.each { |vm| vm.destroy }
-      #EnvironmentGenerator.delete_ips
-      environment.vms.each { |vm| vm.destroy}
-      return exit_state
+
+    end
+
+    def dealkeeper_up
+
     end
 
   end
 
 end
-
-#
-# vagrant_test do |env|
-#    man = env.add_vm(name, base_box)
-#    man.add Management
-#
-#    env.add_vm do |vm|
-#      vm.add Targeting
-#      vm.add Dealkeeper
-#    end
-#   env.rspec '../path_to_spec/'
-#   env.test_vm man
-# end
-
-

@@ -4,22 +4,20 @@ class Banner < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
 
-      sudo('service apache2 stop')
-
       # starting server
-      #exec_home_non_blocking("RACK_ENV=vagrant rvmsudo rackup server --user vagrant -e vagrant")
-      #exec_home('daemon -X "rvmsudo middleman -p 80 -e vagrant"')
-      exec_home("daemon -X 'cd /vagrant/banner && rake server RACK=#{rails_env} > /vagrant/banner/log-banner' ")
-      # rake server RACK_ENV=integration
-
+      exec_home("RACK_ENV=#{rails_env} rake server &> /dev/null")
     end
 
     def code_directory
@@ -31,9 +29,8 @@ class Banner < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      sudo("ps -ef |grep middleman |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
     end
 
   end
-
 end

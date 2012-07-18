@@ -4,10 +4,14 @@ class Analytics < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
-      exec_home("bundle install")
+      exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # copying configuration files
       exec_home('cp -v config/application.yml.example config/application.yml')
@@ -15,7 +19,6 @@ class Analytics < VagrantTest::Service
       exec_home('cp -v config/couchdb.yml.example config/couchdb.yml')
 
       # starting/stoping services
-      sudo('service apache2 stop')      # TODO useless
       exec_home("daemon -X 'cassandra -f'")
       exec_home("nodetool -h 127.0.0.1 ring")
 
@@ -35,7 +38,10 @@ class Analytics < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
+      exec_home("ps -edf | grep cassandra | grep -v grep | tr -s ' '| cut -d ' ' -f 2 | xargs -n 1 sudo kill -9")
+      exec_home("ps -edf | grep ring | grep -v grep | tr -s ' '| cut -d ' ' -f 2 | xargs -n 1 sudo kill -9")
+      exec_home_non_blocking("rvmsudo passenger stop -p#{ports[0]}")
+      exec_home("RAILS_ENV=#{rails_env} ruby script/analytics_consumer_deamon.rb stop")
     end
 
   end

@@ -1,9 +1,15 @@
-def check_inform to_inform
+Dir[File.join(File.dirname(__FILE__), '*.rb')].each do |f|
+  require f
+end
+
+# Print the result of a validation in the console
+def print_validation_result to_inform
   fullfiller = ""
   offset_unit= "  "
-  fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.deep_cat-20
+  fullfiller_size=  TermInfo.screen_size[1]-to_inform.label.size-offset_unit.size*to_inform.display_offset-20
   offset=""
 
+  # OK / failed?
   if to_inform.status == nil
     status_info=""
   elsif to_inform.status == 0
@@ -14,16 +20,23 @@ def check_inform to_inform
     fullfiller_size =  fullfiller_size-10
   end
 
+  # left-align according to numerotation size
+  fullfiller_size = fullfiller_size - to_inform.display_offset*2
+
+  # if more than 10 items
+  if to_inform.id.id >= 10
+    fullfiller_size = fullfiller_size -1
+  end
+
   for i in 1 .. fullfiller_size
     fullfiller = fullfiller +"."
   end
 
-  for i in 1 .. to_inform.deep_cat
+  for i in 1 .. to_inform.display_offset
     offset= offset_unit + offset
   end
 
-
-  if to_inform.class == To_check_category
+  if to_inform.class == ValidatorCatagory
     puts offset+to_inform.id.to_s+" "+to_inform.label+"  "+fullfiller
     return 0
   end
@@ -32,26 +45,12 @@ def check_inform to_inform
     puts offset+to_inform.id.to_s+" "+to_inform.label+"  "+fullfiller+"  ["+status_info+"]"
   else
     $stderr.puts offset+to_inform.id.to_s+" "+to_inform.label+"  "+fullfiller+"  ["+status_info+"]"
-    #TODO write solution
   end
 end
 
 
-class IdFactory
-  def self.create father_cat = nil
-    res = Id.new father_cat
-    if father_cat == nil
-      res.id  = Id.id_generator
-    else
-      #res.id  = father_cat.to_check_Or_category.size+1 TODO actually useless
-    end
-    res
-  end
-
-end
-
-# Create an ID and present it according to the DIN 1421
-class Id
+# Numeration of the displayed menu according to the DIN 1421
+class Numeration
   attr_accessor :id
 
     @@id = 0
@@ -65,7 +64,7 @@ class Id
     @id = neo_id
   end
 
-    def Id.id_generator
+    def Numeration.id_generator
       @@id = @@id+1
     end
 
@@ -76,6 +75,18 @@ class Id
        @father.id.to_s+@id.to_s+"."
      end
   end
+end
 
+# Creating an ID for the menu
+class NumerationFactory
+  def self.create father_cat = nil
+    res = Numeration.new father_cat
+    if father_cat == nil
+      res.id  = Numeration.id_generator
+    else
+      #actually useless because it would be overriden, when added to the category
+    end
+    res
+  end
 
 end

@@ -4,10 +4,14 @@ class Bannerserver < VagrantTest::Service
 
   class << self
 
-    def run
+    def init
       # installing dependencies
       exec_home("gem install bundler")
       exec_home('bundle install')
+    end
+
+    def run
+      init #TODO remove when init-start-stop funktioniert
 
       # cleaning up some files
       exec_home('rm tmp/pids/thin.pid') # done c
@@ -19,11 +23,10 @@ class Bannerserver < VagrantTest::Service
 
       # starting/stoping services
       sudo('/etc/init.d/redis-server start')
-      #sudo('service apache2 stop')
 
       # starting the server / services
       exec_home_non_blocking("rvmsudo passenger start -p#{ports[1]} -d --user vagrant -e  #{rails_env} &>/dev/null")
-      exec_home("rvmsudo  thin start -p#{ports[0]} --user vagrant -e  #{rails_env} -d")
+      exec_home("rvmsudo thin start -p#{ports[0]} --user vagrant -e  #{rails_env} -d")
       exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon start")
     end
 
@@ -36,8 +39,10 @@ class Bannerserver < VagrantTest::Service
     end
 
     def stop
-      #TODO implement me!
-
+      sudo('/etc/init.d/redis-server stop')
+      exec_home_non_blocking("rvmsudo passenger stop -p#{ports[1]}")
+      exec_home("rvmsudo thin stop -p#{ports[0]}")
+      exec_home("RAILS_ENV=#{rails_env} ruby script/bannerserver_publisher_consumer_daemon stop")
     end
 
   end
