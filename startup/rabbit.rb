@@ -22,11 +22,9 @@ class Rabbit < VagrantTest::Service
 
     def stop
       #sudo('/etc/init.d/rabbitmq-server stop')
-      sudo('ps -edf | grep rabbitmq |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9')  # hardcore killed shutdown
+      sudo("ps -edf | grep rabbitmq |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")  # hardcore killed shutdown
     end
 
   end
 
 end
-
-

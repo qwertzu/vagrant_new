@@ -68,15 +68,20 @@ module VagrantTest
             exit_status=0
           elsif  data.match /examples, .* failure/
             exit_status=1
+          else
+            exit_status=2
           end
         end
       rescue => e
         if cmd.match /rspec/
-          puts e.inspect
-          exit_status = 1
+          #  if tests fail, we become an exception:
+          # #<Vagrant::Errors::VagrantError: The following SSH command responded with a non-zero exit status.
+          exit_status = 10
+        else
+          exit_status = 11
+          puts 'Caught an EXCEPTION'
+          message = nil
         end
-        puts 'Caught an EXCEPTION'
-        message = nil
       end
       exit_status
     end

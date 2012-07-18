@@ -41,7 +41,8 @@ class Reporting < VagrantTest::Service
       sudo('service couchdb stop')
 
       exec_home_non_blocking("rvmsudo passenger stop -p#{ports[0]}")
-      exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb stop -p 3001")
+    #  exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby dealomio_reporting_api.rb stop -p 3001")  # TODO stuck
+      sudo("ps -edf | grep dealomio_reporting_api.rb |grep -v grep | tr -s ' '| cut -d' ' -f 2 | xargs -n 1 sudo kill -9")
 
       # stoping the daemons
       exec_home_non_blocking("RAILS_ENV=#{rails_env} ruby scripts/logging.rb stop")

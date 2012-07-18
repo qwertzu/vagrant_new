@@ -15,7 +15,7 @@
 # The template that will be use to create the basebox
 vagrant_template="ubuntu-11.10-server-amd64"
 # The name of the basebox
-baseboxname='dealomio-test28'
+baseboxname='dealomio-test29'
 
 system_password="vagrant"
 mysql_password="root"
