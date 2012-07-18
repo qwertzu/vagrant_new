@@ -1,9 +1,9 @@
 vagrant:
-  lock_file: '/tmp/vagrant_tests.lock'
+  lock_file: './../../../vagrant/vagrant_tests.lock'
   base_box: dealomio-test16
   hosts_file: './hosts'
   vagrant_file: './Vagrantfile'
-  ip_mem: './../../ip_mem'
+  ip_mem: './../../../vagrant/ip_mem'
   management_path: './dealomio_management_api'
   targeting_path: './dealomio_targeting_api'
   dealkeeper_path: './dealomio_dealkeeper'
