@@ -80,8 +80,8 @@ module VagrantTest
 
       EnvironmentGenerator.generate(environment)
       processes = []
-      environment.vms.each { |vm| vm.up}
-
+      environment.vms.each { |vm| processes << fork{vm.up}}
+      processes.each  { |process| waitpid(process)}
 
       environment.vms.map(&:services).flatten.each do |service|
         #Process.fork {

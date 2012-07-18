@@ -6,8 +6,8 @@ vagrant_test do |env|
   rab = env.add_vm(:rabbit)
   rab.add Rabbit
 
-  #man = env.add_vm(:management)
-  #man.add Management
+  man = env.add_vm(:management)
+  man.add Management
 
   #tar = env.add_vm(:targeting)
   #tar.add Targeting
