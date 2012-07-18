@@ -101,6 +101,10 @@ module VagrantTest
       (@services ||= []) << service_clazz
     end
 
+    def state
+      vm.state
+    end
+
     def destroy
       puts "destroy VM"
       vm.destroy
@@ -121,7 +125,7 @@ module VagrantTest
         vm.halt
         puts "About to boot VM #{vm.name}..."
         vm.start
-      elsif vm.state == :saved
+      elsif vm.state == :poweroff
         puts "About to boot VM #{vm.name}..."
         vm.start
       else

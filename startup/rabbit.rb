@@ -8,7 +8,6 @@ class Rabbit < VagrantTest::Service
     end
 
     def run
-      sudo('/etc/init.d/rabbitmq-server stop')
       sudo('/etc/init.d/rabbitmq-server start')
     end
 

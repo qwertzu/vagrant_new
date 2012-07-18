@@ -40,6 +40,20 @@ module VagrantTest
         [80]
       end
 
+      def delete_data_stores
+        delete_mysql_data
+        delete_redis_keys
+        puts "all data deleted"
+      end
+
+      def delete_mysql_data
+        exec_home('mysql -uroot -proot  -e "show databases" | grep -v -E "Database|mysql|information_schema" | xargs -I "@@" mysql -uroot -proot -e "DROP database \`@@\`"')
+      end
+
+      def delete_redis_keys
+        exec_home("redis-cli flushall")
+      end
+
       def stop
         #TODO implement me
       end
@@ -84,9 +98,8 @@ module VagrantTest
 
       EnvironmentGenerator.generate(environment)
 
-      processes = []
-      environment.vms.each { |vm| processes << Process.fork{vm.up}}
-      processes.each {|process| Process.waitpid(process)}
+      environment.vms.each { |vm| puts"#{vm.state} #{vm.name}"; vm.up}
+      puts("all VM's started")
 
       environment.vms.map(&:services).flatten.each do |service|
         service.rails_env = environment.rails_env
@@ -106,7 +119,7 @@ module VagrantTest
         end
 
         exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
-        environment.vms.each { |vm| vm.halt}
+        environment.vms.each { |vm| vm.delete_data_stores; vm.halt}
         return exit_state
       end
 
