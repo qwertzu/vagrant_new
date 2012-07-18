@@ -119,6 +119,8 @@ module VagrantTest
       if vm.state == :running || vm.state == :suspend
         puts "About to stop VM #{vm.name} for reboot..."
         vm.halt
+        puts "About to boot VM #{vm.name}..."
+        vm.start
       elsif vm.state == :saved
         puts "About to boot VM #{vm.name}..."
         vm.start
