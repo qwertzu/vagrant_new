@@ -40,20 +40,6 @@ module VagrantTest
         [80]
       end
 
-      def delete_data_stores
-        delete_mysql_data
-        delete_redis_keys
-        puts "all data deleted"
-      end
-
-      def delete_mysql_data
-        exec_home('mysql -uroot -proot  -e "show databases" | grep -v -E "Database|mysql|information_schema" | xargs -I "@@" mysql -uroot -proot -e "DROP database \`@@\`"')
-      end
-
-      def delete_redis_keys
-        exec_home("redis-cli flushall")
-      end
-
       def stop
         #TODO implement me
       end

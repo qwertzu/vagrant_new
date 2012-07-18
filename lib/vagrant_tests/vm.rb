@@ -157,6 +157,21 @@ module VagrantTest
       VagrantTest::Lock.sync { vm.reload }
     end
 
+    def delete_data_stores
+      delete_mysql_data
+      delete_redis_keys
+      puts "all data deleted"
+    end
+
+    def delete_mysql_data
+      exec('mysql -uroot -proot  -e "show databases" | grep -v -E "Database|mysql|information_schema" | xargs -I "@@" mysql -uroot -proot -e "DROP database \`@@\`"')
+    end
+
+    def delete_redis_keys
+
+      exec("redis-cli flushall")
+    end
+
     def method_missing(method, *args, &block)
       self.vm.__send__(method, *args, &block)
     end
