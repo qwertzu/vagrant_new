@@ -111,6 +111,12 @@ module VagrantTest
       puts "VM destroyed"
     end
 
+    def suspend
+      puts"save VM state"
+      vm.suspend
+      puts "VM saved"
+    end
+
     def halt
       raise "Must run `vagrant up`" if !vm.created?
       raise "Must be running!" if vm.state != (:running || :saved)
@@ -120,7 +126,7 @@ module VagrantTest
     end
 
     def up
-      if vm.state == :running || vm.state == :suspend
+      if vm.state == :running
         puts "About to stop VM #{vm.name} for reboot..."
         vm.halt
         puts "About to boot VM #{vm.name}..."
@@ -128,6 +134,9 @@ module VagrantTest
       elsif vm.state == :poweroff
         puts "About to boot VM #{vm.name}..."
         vm.start
+      elsif vm.state == :saved
+        puts"About to resume #{vm.name}..."
+        vm.resume
       else
         puts "About to import VM #{vm.name} for boot (this can take a few minutes)..."
         VagrantTest::Lock.sync { vm.up }
@@ -168,7 +177,6 @@ module VagrantTest
     end
 
     def delete_redis_keys
-
       exec("redis-cli flushall")
     end
 

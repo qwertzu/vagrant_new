@@ -105,7 +105,8 @@ module VagrantTest
         end
 
         exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
-        environment.vms.each { |vm| vm.delete_data_stores; vm.halt}
+
+        environment.vms.each { |vm| vm.services.each{|service| service.stop}; vm.delete_data_stores; vm.suspend}
         return exit_state
       end
 
