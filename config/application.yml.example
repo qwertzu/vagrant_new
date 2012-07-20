@@ -1,6 +1,6 @@
 vagrant:
   lock_file: './../../../vagrant/vagrant_tests.lock'
-  base_box: dealomio-test16
+  base_box: dealomio-test17
   hosts_file: './hosts'
   vagrant_file: './Vagrantfile'
   ip_mem: './../../../vagrant/ip_mem'
