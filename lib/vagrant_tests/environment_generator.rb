@@ -8,6 +8,28 @@ module VagrantTest
 
       def generate(config)
         services   = config.vms.map(&:services).flatten
+
+        if(ENV['mode'].eql?('suspend') || Settings.mode.eql?('suspend'))
+          need_config = 0
+          config.vms.each do |vm|
+            begin
+            need_config = 1 unless (vm.state == :running) || (vm.state == :saved)
+            rescue
+              need_config = 1
+            end
+          end
+          puts "Old Configuration used .. use mode: reset or halt for new config" if need_config == 0
+          return if need_config == 0
+
+          config.vms.each do |vm|
+            begin
+              vm.state == :running ? vm.halt : vm.destroy
+            rescue
+                puts "VM not created"
+            end
+          end
+        end
+
         free_ips   = get_free_ips(config.vms.size)
         free_ports = get_free_ports(services.map { |service| service.ports.size }.sum)
 

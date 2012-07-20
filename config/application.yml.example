@@ -1,4 +1,8 @@
+defaults: &defaults
+  mode: 'suspend'
+
 vagrant:
+  <<: *defaults
   lock_file: './../../../vagrant/vagrant_tests.lock'
   base_box: servtag-test21
   hosts_file: './hosts'
@@ -17,4 +21,5 @@ vagrant:
   frontend_path: './dealomio_frontend'
   mysql_username: root
   mysql_password: root
+  #mode: 'reset' | 'halt' | 'suspend'
 

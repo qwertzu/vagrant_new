@@ -126,18 +126,21 @@ module VagrantTest
     end
 
     def up
-      if vm.state == :running
+      if (Settings.mode.eql?('halt') || ENV['mode'].eql?('halt')) && (vm.state == :running || vm.state == :saved)
         puts "About to stop VM #{vm.name} for reboot..."
         vm.halt
-        puts "About to boot VM #{vm.name}..."
-        vm.start
-      elsif vm.state == :poweroff
+      elsif Settings.mode.eql?('reset') || ENV['mode'].eql?('reset')
+        puts "About to destroy VM #{vm.name} for reboot..."
+        vm.destroy
+      end
+
+      if vm.state == :poweroff
         puts "About to boot VM #{vm.name}..."
         vm.start
       elsif vm.state == :saved
         puts"About to resume #{vm.name}..."
         vm.resume
-      else
+      elsif vm.state != :running
         puts "About to import VM #{vm.name} for boot (this can take a few minutes)..."
         VagrantTest::Lock.sync { vm.up }
       end

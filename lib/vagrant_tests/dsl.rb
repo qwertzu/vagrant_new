@@ -83,8 +83,7 @@ module VagrantTest
       yield environment
 
       EnvironmentGenerator.generate(environment)
-
-      environment.vms.each { |vm| puts"#{vm.state} #{vm.name}"; vm.up}
+      environment.vms.each { |vm| vm.env.reload!; puts"#{vm.state} #{vm.name}"; vm.up}
       puts("all VM's started")
 
       environment.vms.map(&:services).flatten.each do |service|
@@ -106,7 +105,9 @@ module VagrantTest
 
         exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
 
-        environment.vms.each { |vm| vm.services.each{|service| service.stop}; vm.delete_data_stores; vm.suspend}
+        environment.vms.each { |vm| vm.delete_data_stores; vm.services.each{|service| service.stop}; vm.suspend} if Settings.mode.eql?('suspend') || ENV['mode'].eql?('suspend')
+        environment.vms.each { |vm| vm.delete_data_stores; vm.halt} if Settings.mode.eql?('halt') || ENV['mode'].eql?('halt')
+        environment.vms.each { |vm| vm.destroy} if Settings.mode.eql?('reset') || ENV['mode'].eql?('reset')
         return exit_state
       end
 
