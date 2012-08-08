@@ -4,7 +4,7 @@ module VagrantTest
 
     class << self
 
-      attr_accessor :ip, :path, :port_forwards, :vm, :rails_env
+      attr_accessor :ip, :path, :port_forwards, :vm, :rails_env, :id
 
       def name
         self.to_s.underscore
@@ -23,7 +23,7 @@ module VagrantTest
       end
 
       def exec_home cmd
-        exit_status = vm.exec(cmd , "/vagrant/" + self.name)
+        exit_status = vm.exec(cmd , "/vagrant/#{vm.id}/" + self.name)
         exit_status
       end
 
@@ -83,8 +83,12 @@ module VagrantTest
       yield environment
 
       EnvironmentGenerator.generate(environment)
-      environment.vms.each { |vm| vm.env.reload!; puts"#{vm.state} #{vm.name}"; vm.up}
-      puts("all VM's started")
+      environment.vms.each do |vm|
+        puts"#{vm.state} #{vm.name} #{vm.vm.name}"
+        vm.sudo("cp /vagrant/hosts /etc/hosts")
+
+      end
+      puts("all VM's ready")
 
       environment.vms.map(&:services).flatten.each do |service|
         service.rails_env = environment.rails_env
@@ -104,10 +108,14 @@ module VagrantTest
         end
 
         exit_state = environment.test_service.exec_home("#{env_variables} #{before_command} bundle exec rspec #{spec} #{options} #{after_command}") unless environment.test_service == nil
+        FileUtils.move("#{Settings.shared_folder}/#{environment.test_service.id}/reports", "#{File.expand_path File.dirname(__FILE__)}/") unless environment.ci_rep.eql? " "
 
-        environment.vms.each { |vm| vm.delete_data_stores; vm.services.each{|service| service.stop}; vm.suspend} if Settings.mode.eql?('suspend') || ENV['mode'].eql?('suspend')
-        environment.vms.each { |vm| vm.delete_data_stores; vm.halt} if Settings.mode.eql?('halt') || ENV['mode'].eql?('halt')
-        environment.vms.each { |vm| vm.destroy} if Settings.mode.eql?('reset') || ENV['mode'].eql?('reset')
+        environment.vms.each do |vm|
+          puts vm
+          vm.delete_data_stores
+          vm.services.each{|service| service.stop}
+          EnvironmentGenerator.remove_vm_mem(vm)
+        end
         return exit_state
       end
 

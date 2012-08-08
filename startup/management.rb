@@ -53,7 +53,7 @@ class Management < VagrantTest::Service
       sudo('/etc/init.d/redis-server stop')
 
       # starting server
-      exec_home("rvmsudo passenger stop -p#{ports[0]}")
+      exec("rvmsudo passenger stop -p#{ports[0]}")
 
     end
 
